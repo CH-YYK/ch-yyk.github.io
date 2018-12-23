@@ -2,7 +2,7 @@
 
 body {
   font-family: 'Lora', 'Times New Roman', serif;
-  font-size: 20px;
+  font-size: 14px;
   color: #404040;
   position: relative;
   background: #FFF;
@@ -424,7 +424,7 @@ footer .theme-by {
 .blog-tags {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #999;
-  font-size: 15px;
+  font-size: 14px;
   margin-bottom: 30px;
 }
 
@@ -503,6 +503,7 @@ footer .theme-by {
 }
 .intro-header .page-heading,
 .intro-header .tags-heading {
+  font-size: 60px;
   text-align: center;
 }
 .intro-header.big-img .page-heading,
@@ -568,10 +569,10 @@ footer .theme-by {
   }
   .intro-header .page-heading h1,
   .intro-header .tags-heading h1 {
-    font-size: 30px;
+    font-size: 45px;
   }
   .intro-header .post-heading h1 {
-    font-size: 30px;
+    font-size: 25px;
   }
   .intro-header.big-img .img-desc {
     font-size: 14px;
@@ -607,7 +608,7 @@ footer .theme-by {
 }
 @media only screen and (max-width: 325px) {
   .intro-header.big-img {
-    height: 200px;
+    height: 150px;
   }
 }
 

@@ -48,32 +48,5 @@
       <description></description>
     </item>
     
-    <item>
-      <title>Plot</title>
-      <link>/tags/plot/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
-      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
-      <guid>/tags/plot/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>R Markdown</title>
-      <link>/tags/r-markdown/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
-      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
-      <guid>/tags/r-markdown/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Regression</title>
-      <link>/tags/regression/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
-      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
-      <guid>/tags/regression/</guid>
-      <description></description>
-    </item>
-    
   </channel>
 </rss>

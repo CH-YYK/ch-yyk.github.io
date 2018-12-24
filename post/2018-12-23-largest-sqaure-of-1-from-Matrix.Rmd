@@ -1,0 +1,73 @@
+---
+title: "Largest Square of 1’s from A Matrix"
+date: 2018-12-23
+tags: ['Code', 'Dynamic Programming']
+categories: ['Algo Problems']
+---
+### Problem Statement
+Find the Largest square of 1's from a matrix. For example, given a matrix:
+
+$$
+  M = \left[ \begin{array}{rrrrr}
+  1 & 1 & 0 & 1 & 0 \\ 
+  0 & 1 & 1 & 1 & 0 \\ 
+  1 & 1 & 1 & 1 & 0 \\ 
+  0 & 1 & 1 & 1 & 1 \\ 
+  \end{array} \right]
+$$
+Suppose the index set for row and column are 
+$$i \in [1,4] \cap \mathbb{N}_{+}$$ and $$j \in [1, 5] \cap \mathbb{N}_{+}$$.
+
+Obviously the largest squre of 1's in this case could be represented by a set of index tuples $$\{(i,j)\ |\ i \in \{2, 3, 4\}\ and\ j \in \{2,3,4\}\}$$.
+
+
+### Approach (Dynamic Programming)
+Let's see how we could use dynamic programming to solve this problem. Figure out how transition function would be used here. Provided an index set $[i, j]$, suppose we only focus on largest square that have the point $M[i,j]$ and $M[i, j]$ is placed at the right-bottom corner. i.e. the interested square, $\hat{M}_{i,j}$, that have $M[i,j]$ must follow
+
+$$
+\hat{M}_{i,j} \subseteq \{(i',j')\ |\ i' \leq i\ and\ j' \leq j\}
+$$
+and the size of $\hat{M}_{i,j}$ is defined by $C_{i,j}$.
+Then for a $2\times 2$ sub-matrix of $M$ where the $C_{i-1,j}$, $C_{i-1,j-1}$, $C_{i, j-1}$ are given, $C_{i,j}$ will be determined by the minimum values of these three.
+
+> 1. $C_{i,j} = min\{C_{i-1,j}, C_{i-1,j-1}, C_{i, j-1}\} + 1$ if $M_{i,j} = 1$ else $0$.
+> 2. $C_{i,j} = M_{i,j}$ if $i=0$ or $j=0$ (The values at first row or first column are initial values) 
+
+### Codes (python)
+Here is the python codes with one example. In the first place, remove Nulls for $M$ should at least have 1 row or 1 column. Then initialize $C$ by duplicating $M$. Update values in $C$ with respect to the transition function above. Finally, find the maximum value in $C$.
+```{python}
+class Solution:
+    def largestSquareOf_1(self, m):
+        # eliminate Nulls
+        if len(m) == 0:
+            return 0
+        if len(m[0]) == 0:
+            return 0
+
+        C = [[j for j in i] for i in m]
+        # update count matrix
+        for i in range(len(m)):
+            for j in range(len(m[0])):
+                if i == 0 or j == 0:
+                    C[i][j] = m[i][j]
+                elif m[i][j] == 0:
+                    C[i][j] = 0
+                else:
+                    C[i][j] = min(C[i-1][j], C[i][j-1], C[i-1][j-1]) + 1
+
+        # find the maximum value
+        maximum = 0
+        for i in C:
+            maximum = max(maximum, max(i))
+        return maximum
+
+if __name__ == '__main__':
+    m = [
+        [1, 1, 0, 1, 0],
+        [0, 1, 1, 1, 0],
+        [1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1]
+    ]
+    print(Solution().largestSquareOf_1(m))
+```
+

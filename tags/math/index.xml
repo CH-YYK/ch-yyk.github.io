@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Code on Hello World</title>
-    <link>/tags/code/</link>
-    <description>Recent content in Code on Hello World</description>
+    <title>Math on Hello World</title>
+    <link>/tags/math/</link>
+    <description>Recent content in Math on Hello World</description>
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
     <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
     <lastBuildDate>Sun, 23 Dec 2018 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/code/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/math/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -22,16 +22,6 @@
 overlapping-rectangle
  The task is computing the overlapping area.
  Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.</description>
-    </item>
-    
-    <item>
-      <title>Largest Square of 1’s from A Matrix</title>
-      <link>/post/2018-12-23-largest-sqaure-of-1-from-matrix/</link>
-      <pubDate>Sun, 23 Dec 2018 00:00:00 +0000</pubDate>
-      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
-      <guid>/post/2018-12-23-largest-sqaure-of-1-from-matrix/</guid>
-      <description>Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp;amp; 1 &amp;amp; 0 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{+}\] and \[j \in [1, 5] \cap \mathbb{N}_{+}\].</description>
     </item>
     
   </channel>

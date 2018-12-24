@@ -1,0 +1,44 @@
+---
+title: "Area of Overlapping Rectangle"
+tags: ['Code', 'Math', 'Easy one']
+categories: ['Algo Problems']
+date: 2018-12-23
+---
+
+### Problem
+Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
+
+![overlapping-rectangle](/post/2018-12-23-Overlapping-Rectangle_files/overlapping_rectangle.png)
+
+The task is computing the overlapping area.
+
+### Approach
+Since the order of given points are fixed. i.e. $Rect_{b_1}$,$Rect_{t_1}$,$Rect_{b_2}$, $Rect_{t_2}$, where $Rect_{b_i}$ refer to the bottom point of rectangle $i$ and $b\Rightarrow bottom$, $t\Rightarrow top$. The direct approach is sorting four points according both $x$ and $y$, then the two points in the middle will define the overlapping rectangle. But the flaw of this approach cannot figure out the case where no overlapping happens. We all do it in a more generic way to find the points determining the overlapping.
+
+#### Finding the width and height respectively. 
+$height$ must be equal to the gap between the minimal $y$ from two top points and the maximum $y$ from two bottom points. Similar to how $width$ defined by $x$. So design a method that recursively compute $height$ and $width$ either of which must be positive when there is overlapping.
+
+### Code (Python)
+For the example where the rectangle 1 is defined by $\{(2,1),(5,5)\}$ and the rectangle 2 is defined by $\{(3,2), (5,7)\}$
+```{python}
+class Solution:
+    def areaOverlapping(self, Rb1, Rt1, Rb2, Rt2):
+        height = self.distance(Rb1[0], Rt1[0], Rb2[0], Rt2[0])
+        if height <= 0:
+            return 0
+        width = self.distance(Rb1[1], Rt1[1], Rb2[1], Rt2[1])
+        if height <= 0:
+            return 0
+        return height * width
+
+    def distance(self, Rb1, Rt1, Rb2, Rt2):
+        return min(Rt1, Rt2) - max(Rb1, Rb2)
+
+if __name__ == '__main__':
+    Rb1 = (2, 1)
+    Rb2 = (3, 2)
+    Rt1 = (5, 5)
+    Rt2 = (5, 7)
+    print(Solution().areaOverlapping(Rb1, Rt1, Rb2, Rt2))
+```
+

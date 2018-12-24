@@ -67,7 +67,7 @@
   "description" : "Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
 \[ M = \left[ \begin{array}{rrrrr} 1 &amp;amp; 1 &amp;amp; 0 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{&#43;}\] and \[j \in [1, 5] \cap \mathbb{N}_{&#43;}\].",
   "inLanguage" : "en",
-  "wordCount": 376,
+  "wordCount": 425,
   "datePublished" : "2018-12-23T00:00:00",
   "dateModified" : "2018-12-23T00:00:00",
   "image" : "/img/cat.jpeg",
@@ -263,7 +263,7 @@
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;376&nbsp;words
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;425&nbsp;words
   
   
     &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang Yang
@@ -317,6 +317,7 @@
 </div>
 <div id="codes-python" class="section level3">
 <h3>Codes (python)</h3>
+<p>Here is the python codes with one example. In the first place, remove Nulls for <span class="math inline">\(M\)</span> should at least have 1 row or 1 column. Then initialize <span class="math inline">\(C\)</span> by duplicating <span class="math inline">\(M\)</span>. Update values in <span class="math inline">\(C\)</span> with respect to the transition function above. Finally, find the maximum value in <span class="math inline">\(C\)</span>.</p>
 <pre class="python"><code>class Solution:
     def largestSquareOf_1(self, m):
         # eliminate Nulls

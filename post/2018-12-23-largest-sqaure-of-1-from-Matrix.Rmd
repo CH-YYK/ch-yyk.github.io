@@ -34,6 +34,7 @@ Then for a $2\times 2$ sub-matrix of $M$ where the $C_{i-1,j}$, $C_{i-1,j-1}$, $
 > 2. $C_{i,j} = M_{i,j}$ if $i=0$ or $j=0$ (The values at first row or first column are initial values) 
 
 ### Codes (python)
+Here is the python codes with one example. In the first place, remove Nulls for $M$ should at least have 1 row or 1 column. Then initialize $C$ by duplicating $M$. Update values in $C$ with respect to the transition function above. Finally, find the maximum value in $C$.
 ```{python}
 class Solution:
     def largestSquareOf_1(self, m):

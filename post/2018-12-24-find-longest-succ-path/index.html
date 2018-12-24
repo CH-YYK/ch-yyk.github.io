@@ -7,18 +7,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Area of Overlapping Rectangle - Hello World</title>
-  <meta property="og:title" content="Area of Overlapping Rectangle" />
-  <meta name="twitter:title" content="Area of Overlapping Rectangle" />
-  <meta name="description" content="Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
-overlapping-rectangle
- The task is computing the overlapping area.
- Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.">
-  <meta property="og:description" content="Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
-overlapping-rectangle
- The task is computing the overlapping area.
- Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.">
-  <meta name="twitter:description" content="Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis. …">
+  <title>Find the Longest Successive Path in a Matrix - Hello World</title>
+  <meta property="og:title" content="Find the Longest Successive Path in a Matrix" />
+  <meta name="twitter:title" content="Find the Longest Successive Path in a Matrix" />
+  <meta name="description" content="Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest successive sequence in this matrix. The sequence must be in ascending order. \[ M = \left[ \begin{array}{rrrrr} 4 &amp; 1 &amp; 3 \\ 4 &amp; 7 &amp; 6 \\ 8 &amp; 9 &amp; 10 \\ \end{array} \right] \]">
+  <meta property="og:description" content="Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest successive sequence in this matrix. The sequence must be in ascending order. \[ M = \left[ \begin{array}{rrrrr} 4 &amp; 1 &amp; 3 \\ 4 &amp; 7 &amp; 6 \\ 8 &amp; 9 &amp; 10 \\ \end{array} \right] \]">
+  <meta name="twitter:description" content="Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest …">
   <meta name="author" content="Yikang Yang"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -54,8 +48,8 @@ overlapping-rectangle
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "/post/2018-12-23-overlapping-rectangle/",
-          "name": "Area of overlapping rectangle"
+          "@id": "/post/2018-12-24-find-longest-succ-path/",
+          "name": "Find the longest successive path in a matrix"
         }
     }]
 }
@@ -66,18 +60,15 @@ overlapping-rectangle
   "author": {
     "name" : "Yikang Yang"
   },
-  "headline": "Area of Overlapping Rectangle",
-  "description" : "Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
-overlapping-rectangle
- The task is computing the overlapping area.
- Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.",
+  "headline": "Find the Longest Successive Path in a Matrix",
+  "description" : "Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest successive sequence in this matrix. The sequence must be in ascending order. \[ M = \left[ \begin{array}{rrrrr} 4 &amp;amp; 1 &amp;amp; 3 \\ 4 &amp;amp; 7 &amp;amp; 6 \\ 8 &amp;amp; 9 &amp;amp; 10 \\ \end{array} \right] \]",
   "inLanguage" : "en",
-  "wordCount": 273,
-  "datePublished" : "2018-12-23T00:00:00",
-  "dateModified" : "2018-12-23T00:00:00",
+  "wordCount": 386,
+  "datePublished" : "2018-12-24T00:00:00",
+  "dateModified" : "2018-12-24T00:00:00",
   "image" : "/img/cat.jpeg",
-  "keywords" : [ "Code, Math, Easy one" ],
-  "mainEntityOfPage" : "/post/2018-12-23-overlapping-rectangle/",
+  "keywords" : [ "Code, DFS" ],
+  "mainEntityOfPage" : "/post/2018-12-24-find-longest-succ-path/",
   "publisher" : {
     "@type": "Organization",
     "name" : "/",
@@ -91,24 +82,21 @@ overlapping-rectangle
 }
 </script>
 
-<meta property="og:title" content="Area of Overlapping Rectangle" />
-<meta property="og:description" content="Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
-overlapping-rectangle
- The task is computing the overlapping area.
- Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.">
+<meta property="og:title" content="Find the Longest Successive Path in a Matrix" />
+<meta property="og:description" content="Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest successive sequence in this matrix. The sequence must be in ascending order. \[ M = \left[ \begin{array}{rrrrr} 4 &amp; 1 &amp; 3 \\ 4 &amp; 7 &amp; 6 \\ 8 &amp; 9 &amp; 10 \\ \end{array} \right] \]">
 <meta property="og:image" content="/img/cat.jpeg" />
-<meta property="og:url" content="/post/2018-12-23-overlapping-rectangle/" />
+<meta property="og:url" content="/post/2018-12-24-find-longest-succ-path/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Hello World" />
-  <meta name="twitter:title" content="Area of Overlapping Rectangle" />
-  <meta name="twitter:description" content="Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis. …">
+  <meta name="twitter:title" content="Find the Longest Successive Path in a Matrix" />
+  <meta name="twitter:description" content="Problem This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest …">
   <meta name="twitter:image" content="/img/cat.jpeg" />
   <meta name="twitter:card" content="summary" />
   <link href='/img/favicon.ico' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="/img/cat.jpeg" />
   <meta name="twitter:image" content="/img/cat.jpeg" />
   <meta name="twitter:card" content="summary" />
-  <meta property="og:url" content="/post/2018-12-23-overlapping-rectangle/" />
+  <meta property="og:url" content="/post/2018-12-24-find-longest-succ-path/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hello World" />
 
@@ -255,7 +243,7 @@ overlapping-rectangle
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="post-heading">
               
-                <h1>Area of Overlapping Rectangle</h1>
+                <h1>Find the Longest Successive Path in a Matrix</h1>
               
               
               
@@ -263,13 +251,13 @@ overlapping-rectangle
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;Posted on December 23, 2018
+  <i class="fas fa-calendar"></i>&nbsp;Posted on December 24, 2018
   
   
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;273&nbsp;words
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;386&nbsp;words
   
   
     &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang Yang
@@ -297,42 +285,66 @@ overlapping-rectangle
 
 <div id="problem" class="section level3">
 <h3>Problem</h3>
-<p>Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.</p>
-<div class="figure">
-<img src="/post/2018-12-23-Overlapping-Rectangle_files/overlapping_rectangle.png" alt="overlapping-rectangle" />
-<p class="caption">overlapping-rectangle</p>
+<p>This is a coding problem which I previously failed in a online test. You are given a matrix filled with positive numbers and the task is build a function that could return the longest successive sequence in this matrix. The sequence must be in ascending order. <span class="math display">\[
+  M = \left[ \begin{array}{rrrrr}
+  4 &amp; 1 &amp; 3 \\ 
+  4 &amp; 7 &amp; 6 \\ 
+  8 &amp; 9 &amp; 10 \\ 
+  \end{array} \right]
+\]</span></p>
+<p>In the example above, the answer should be <span class="math inline">\([1, 3, 6, 7, 9, 10]\)</span>.</p>
 </div>
-<p>The task is computing the overlapping area.</p>
-</div>
-<div id="approach" class="section level3">
-<h3>Approach</h3>
-<p>Since the order of given points are fixed. i.e. <span class="math inline">\(Rect_{b_1}\)</span>,<span class="math inline">\(Rect_{t_1}\)</span>,<span class="math inline">\(Rect_{b_2}\)</span>, <span class="math inline">\(Rect_{t_2}\)</span>, where <span class="math inline">\(Rect_{b_i}\)</span> refer to the bottom point of rectangle <span class="math inline">\(i\)</span> and <span class="math inline">\(b\Rightarrow bottom\)</span>, <span class="math inline">\(t\Rightarrow top\)</span>. The direct approach is sorting four points according both <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, then the two points in the middle will define the overlapping rectangle. But the flaw of this approach cannot figure out the case where no overlapping happens. We all do it in a more generic way to find the points determining the overlapping.</p>
-<div id="finding-the-width-and-height-respectively." class="section level4">
-<h4>Finding the width and height respectively.</h4>
-<p><span class="math inline">\(height\)</span> must be equal to the gap between the minimal <span class="math inline">\(y\)</span> from two top points and the maximum <span class="math inline">\(y\)</span> from two bottom points. Similar to how <span class="math inline">\(width\)</span> defined by <span class="math inline">\(x\)</span>. So design a method that recursively compute <span class="math inline">\(height\)</span> and <span class="math inline">\(width\)</span> either of which must be positive when there is overlapping.</p>
-</div>
+<div id="approach-dfs" class="section level3">
+<h3>Approach (DFS)</h3>
+<p>The most intuitive option must be using <em>deep first search</em> by which we collect all paths start from each value in the matrix and find the one that is longest. Overall, we need two function. The first one is for iteratively test values in matrix and another one is for finding paths recursively.</p>
 </div>
 <div id="code-python" class="section level3">
 <h3>Code (Python)</h3>
-<p>For the example where the rectangle 1 is defined by <span class="math inline">\(\{(2,1),(5,5)\}\)</span> and the rectangle 2 is defined by <span class="math inline">\(\{(3,2), (5,7)\}\)</span></p>
+<ul>
+<li>Function 1: <em>all_paths</em> is built for loop</li>
+<li>Function 2: <em>find_path</em> will find the path as larger as possible.</li>
+</ul>
+<p>In <code>all_paths</code>, feed every value in the matrix to <code>find_path</code> iteratively. In <code>find_path</code>, recursively test all four cases (up, down, left, right) and return the one that is longest at every step.</p>
 <pre class="python"><code>class Solution:
-    def areaOverlapping(self, Rb1, Rt1, Rb2, Rt2):
-        height = self.distance(Rb1[0], Rt1[0], Rb2[0], Rt2[0])
-        if height &lt;= 0:
-            return 0
-        width = self.distance(Rb1[1], Rt1[1], Rb2[1], Rt2[1])
-        if height &lt;= 0:
-            return 0
-        return height * width
-    def distance(self, Rb1, Rt1, Rb2, Rt2):
-        return min(Rt1, Rt2) - max(Rb1, Rb2)
+    def all_paths(self, matrix):
+        if len(matrix) == 0:
+            return None
+        if len(matrix[0]) == 0:
+            return None
+        paths = []
+        rows, cols = len(matrix), len(matrix[0])
+        for i in range(rows):
+            for j in range(cols):
+                paths.append(self.find_path(matrix, i, j, rows, cols, []))
+        return max(paths, key=len)
+    
+    def find_path(self, matrix, i, j, rows, cols, paths):
+        tmp = matrix[i][j]
+        matrix[i][j] = 0
+        
+        # if `all_sets` is empty, there is no next number in this path.
+        all_sets = []
+        if j + 1 &lt; cols and matrix[i][j + 1] &gt; tmp:
+            all_sets.append(self.find_path(matrix, i, j + 1, rows, cols, paths+[tmp]))
+        if j - 1 &gt;= 0 and matrix[i][j - 1] &gt; tmp:
+            all_sets.append(self.find_path(matrix, i, j - 1, rows, cols, paths+[tmp]))
+        if i + 1 &lt; rows and matrix[i + 1][j] &gt; tmp:
+            all_sets.append(self.find_path(matrix, i + 1, j, rows, cols, paths+[tmp]))
+        if i - 1 &gt;= 0 and matrix[i - 1][j] &gt; tmp:
+            all_sets.append(self.find_path(matrix, i - 1, j, rows, cols, paths+[tmp]))
+        matrix[i][j] = tmp
+        if len(all_sets) == 0:
+            return paths + [tmp]
+        else:
+            return max(all_sets, key=len)
 if __name__ == &#39;__main__&#39;:
-    Rb1 = (2, 1)
-    Rb2 = (3, 2)
-    Rt1 = (5, 5)
-    Rt2 = (5, 7)
-    print(Solution().areaOverlapping(Rb1, Rt1, Rb2, Rt2))</code></pre>
-<pre><code>## 6</code></pre>
+    m = [
+        [4, 1, 3],
+        [4, 7, 6],
+        [8, 9, 10]
+    ]
+    print(Solution().all_paths(m))</code></pre>
+<pre><code>## [1, 3, 6, 7, 9, 10]</code></pre>
 </div>
 
 
@@ -341,9 +353,7 @@ if __name__ == &#39;__main__&#39;:
             
               <a href="//tags/code/">Code</a>&nbsp;
             
-              <a href="//tags/math/">Math</a>&nbsp;
-            
-              <a href="//tags/easy-one/">Easy one</a>&nbsp;
+              <a href="//tags/dfs/">DFS</a>&nbsp;
             
           </div>
         
@@ -359,49 +369,49 @@ if __name__ == &#39;__main__&#39;:
     <ul class="share">
       
       <li>
-        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f&amp;text=Area%20of%20Overlapping%20Rectangle&amp;via=" target="_blank" title="Share on Twitter">
+        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f&amp;text=Find%20the%20Longest%20Successive%20Path%20in%20a%20Matrix&amp;via=" target="_blank" title="Share on Twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f" target="_blank" title="Share on Google Plus">
+        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f" target="_blank" title="Share on Google Plus">
           <i class="fab fa-google-plus"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f" target="_blank" title="Share on Facebook">
+        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f" target="_blank" title="Share on Facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f&amp;title=Area%20of%20Overlapping%20Rectangle" target="_blank" title="Share on Reddit">
+        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f&amp;title=Find%20the%20Longest%20Successive%20Path%20in%20a%20Matrix" target="_blank" title="Share on Reddit">
           <i class="fab fa-reddit"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f&amp;title=Area%20of%20Overlapping%20Rectangle" target="_blank" title="Share on LinkedIn">
+        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f&amp;title=Find%20the%20Longest%20Successive%20Path%20in%20a%20Matrix" target="_blank" title="Share on LinkedIn">
           <i class="fab fa-linkedin"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f&amp;title=Area%20of%20Overlapping%20Rectangle" target="_blank" title="Share on StumbleUpon">
+        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f&amp;title=Find%20the%20Longest%20Successive%20Path%20in%20a%20Matrix" target="_blank" title="Share on StumbleUpon">
           <i class="fab fa-stumbleupon"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2f2018-12-23-overlapping-rectangle%2f&amp;description=Area%20of%20Overlapping%20Rectangle" target="_blank" title="Share on Pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2f2018-12-24-find-longest-succ-path%2f&amp;description=Find%20the%20Longest%20Successive%20Path%20in%20a%20Matrix" target="_blank" title="Share on Pinterest">
           <i class="fab fa-pinterest"></i>
         </a>
       </li>
@@ -418,6 +428,8 @@ if __name__ == &#39;__main__&#39;:
           <h4 class="see-also">See also</h4>
           <ul>
           
+            <li><a href="/post/2018-12-23-overlapping-rectangle/">Area of Overlapping Rectangle</a></li>
+          
             <li><a href="/post/2018-12-23-largest-sqaure-of-1-from-matrix/">Largest Square of 1’s from A Matrix</a></li>
           
           </ul>
@@ -429,13 +441,9 @@ if __name__ == &#39;__main__&#39;:
         <ul class="pager blog-pager">
           
             <li class="previous">
-              <a href="/post/2018-12-23-largest-sqaure-of-1-from-matrix/" data-toggle="tooltip" data-placement="top" title="Largest Square of 1’s from A Matrix">&larr; Previous Post</a>
+              <a href="/post/2018-12-23-overlapping-rectangle/" data-toggle="tooltip" data-placement="top" title="Area of Overlapping Rectangle">&larr; Previous Post</a>
             </li>
           
-          
-            <li class="next">
-              <a href="/post/2018-12-24-find-longest-succ-path/" data-toggle="tooltip" data-placement="top" title="Find the Longest Successive Path in a Matrix">Next Post &rarr;</a>
-            </li>
           
         </ul>
       

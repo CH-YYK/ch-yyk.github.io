@@ -22,6 +22,15 @@
     </item>
     
     <item>
+      <title>Verify Path In Matrix</title>
+      <link>/post/2018-12-24-find-path-in-matrix/</link>
+      <pubDate>Mon, 24 Dec 2018 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/2018-12-24-find-path-in-matrix/</guid>
+      <description>Problem You are given a matrix filled with characters and a string. Task is building a function to find out whether the string exist in the matrix. For example, suppose we have a matrix like following: \[ M = \left[ \begin{array}{rrrrr} A &amp;amp; B &amp;amp; C \\ G &amp;amp; D &amp;amp; X \\ E &amp;amp; F &amp;amp; Y \\ \end{array} \right] \] and a string “AGDXY”, then the function should return True because the string could be represented by a path in the matrix.</description>
+    </item>
+    
+    <item>
       <title>Area of Overlapping Rectangle</title>
       <link>/post/2018-12-23-overlapping-rectangle/</link>
       <pubDate>Sun, 23 Dec 2018 00:00:00 +0000</pubDate>

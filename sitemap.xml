@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>/post/2018-12-24-find-path-in-matrix/</loc>
+    <lastmod>2018-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/post/2018-12-23-overlapping-rectangle/</loc>
     <lastmod>2018-12-23T00:00:00+00:00</lastmod>
   </url>
@@ -71,6 +76,12 @@
   </url>
   
   <url>
+    <loc>/tags/nfs/</loc>
+    <lastmod>2018-12-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/page/</loc>
     <lastmod>2016-05-05T21:48:51-07:00</lastmod>
     <priority>0</priority>
@@ -84,6 +95,12 @@
   
   <url>
     <loc>/tags/</loc>
+    <lastmod>2018-12-24T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/%E5%89%91%E6%8C%87offer/</loc>
     <lastmod>2018-12-24T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

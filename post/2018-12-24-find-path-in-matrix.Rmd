@@ -1,0 +1,65 @@
+---
+title: "Verify Path In Matrix"
+author: "Yikang Yang"
+date: "2018-12-24"
+tags: ["code", "NFS", "剑指offer"]
+categores: ['Algo Problems']
+---
+
+### Problem
+
+You are given a matrix filled with characters and a string. Task is building a function to find out whether the string exist in the matrix. For example, suppose we have a matrix like following:
+$$
+  M = \left[ \begin{array}{rrrrr}
+  A & B & C \\ 
+  G & D & X \\ 
+  E & F & Y \\ 
+  \end{array} \right]
+$$
+and a string "AGDXY", then the function should return *True* because the string could be represented by a path in the matrix. The path could be expressed by a process of $i_t$ or $j_t$ where $i$ and $j$ are indices of the matrix and 
+$$
+((i_t-i_{t-1}=1) \wedge(j_t-j_{t-1}=0)) \Leftrightarrow ((i_t-i_{t-1}=0) \wedge(j_t-j_{t-1}=1))
+$$
+
+### Approach (DFS)
+I am going to try DFS (*deep first search*) for this problem. Two functions are required, one for loop and another one for recursion. In this task, all four cases should be tested (up, down, left, right). When the path complete return, end the function and return True.
+
+### Code (python)
+```{python}
+class Solution:
+    def hasPath(self, matrix, path):
+        # for each value in the matrix
+        rows, cols = len(matrix), len(matrix[0])
+        for i in range(rows):
+            for j in range(cols):
+                if matrix[i][j] == path[0] and self.find_path(list(matrix),rows,cols,path[1:],i,j):
+                        return True
+        return False
+
+    def find_path(self, matrix, rows, cols, path, i, j):
+        if not path:
+            return True
+        matrix[i][j]=0
+        if j+1 < cols and matrix[i][j+1] == path[0]:
+            return self.find_path(matrix, rows, cols, path[1:], i, j+1)
+        elif j-1 >= 0 and matrix[i][j-1] == path[0]:
+            return self.find_path(matrix, rows, cols, path[1:], i, j - 1)
+        elif i+1 < rows and matrix[i+1][j] == path[0]:
+            return self.find_path(matrix, rows, cols, path[1:], i+1, j)
+        elif i-1 >= 0 and matrix[i-1][j] == path[0]:
+            return self.find_path(matrix, rows, cols, path[1:], i-1, j)
+        else:
+            return False
+
+if __name__ == '__main__':
+    path= 'BDXYF'
+    matrix = [
+      ['A', 'B', 'C'],
+      ['E', 'D', 'F'],
+      ['G', 'X', 'Y']
+    ]
+    solution = Solution()
+    ans = solution.hasPath(matrix, path)
+    print(ans)
+```
+

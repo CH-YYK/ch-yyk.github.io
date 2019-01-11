@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Data Structure on Hello World</title>
+    <link>/tags/data-structure/</link>
+    <description>Recent content in Data Structure on Hello World</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
+    <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
+    <lastBuildDate>Tue, 08 Jan 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/data-structure/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Linked List and Classic problems</title>
+      <link>/post/2019-01-08-linkedlist-and-problems/</link>
+      <pubDate>Tue, 08 Jan 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/2019-01-08-linkedlist-and-problems/</guid>
+      <description>In preparing for the coding interview, I will start writing blogs to record the hints and tips about the basic data structures. The series of the blog will start from Linked List in this one.
+Definition: According to the book, Cracking the Coding Interview, a linked list is a data structure that represents a sequence of nodes where each node stores a value and points to next node.
+diagram</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
     <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
-    <lastBuildDate>Tue, 08 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 11 Jan 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/algo-problems/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Some Array Manipulation Problems</title>
+      <link>/post/2019-01-11-some-array-manipulation-problems/</link>
+      <pubDate>Fri, 11 Jan 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/2019-01-11-some-array-manipulation-problems/</guid>
+      <description>What is Array? An array is an aggregate data structure that is designed to store a group of objects of the same or different types. In python array is simply represented as one list with the complexity table.
+   case append get item set item get slice    Avg complexity \(O(1)\) \(O(1)\) \(O(1)\) \(O(k)\)      Problems This blog is to keep log of some basic array manipulation problems collected these days to help understand.</description>
+    </item>
     
     <item>
       <title>Linked List and Classic problems</title>

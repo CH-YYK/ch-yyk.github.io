@@ -2,7 +2,7 @@
 title: "Linked List and Classic problems"
 author: "Yikang Yang"
 date: "2019-01-08"
-tags: ["data structure", "code"]
+tags: ["data-structure", "code"]
 categories: ["algo-problems"]
 ---
 

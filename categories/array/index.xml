@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Data Structure on Hello World</title>
-    <link>/tags/data-structure/</link>
-    <description>Recent content in Data Structure on Hello World</description>
+    <title>Array on Hello World</title>
+    <link>/categories/array/</link>
+    <description>Recent content in Array on Hello World</description>
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
     <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
     <lastBuildDate>Fri, 11 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/data-structure/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/categories/array/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -20,17 +20,6 @@
       <guid>/post/2019-01-11-some-array-manipulation-problems/</guid>
       <description>What is Array? An array is an aggregate data structure that is designed to store a group of objects of the same or different types. In python array is simply represented as one list with the complexity table.
    case append get item set item get slice    Avg complexity \(O(1)\) \(O(1)\) \(O(1)\) \(O(k)\)      Problems This blog is to keep log of some basic array manipulation problems collected these days to help understand.</description>
-    </item>
-    
-    <item>
-      <title>Linked List and Classic problems</title>
-      <link>/post/2019-01-08-linkedlist-and-problems/</link>
-      <pubDate>Tue, 08 Jan 2019 00:00:00 +0000</pubDate>
-      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
-      <guid>/post/2019-01-08-linkedlist-and-problems/</guid>
-      <description>In preparing for the coding interview, I will start writing blogs to record the hints and tips about the basic data structures. The series of the blog will start from Linked List in this one.
-Definition: According to the book, Cracking the Coding Interview, a linked list is a data structure that represents a sequence of nodes where each node stores a value and points to next node.
-diagram</description>
     </item>
     
   </channel>

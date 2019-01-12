@@ -1,0 +1,166 @@
+---
+title: "Some Array Manipulation Problems"
+author: "Yikang Yang"
+date: "2019-01-11"
+tags: ["code", "data-structure"]
+categories: ["algo-problems", "array"]
+---
+
+### What is Array?
+An array is an aggregate data structure that is designed to store a group of objects of the same or different types. In python array is simply represented as one list with the complexity table.
+
+<center>
+|case          | append | get item |set item| get slice |
+|-------------:|-------:|---------:|-------:|----------:|
+|Avg complexity| $O(1)$ | $O(1)$   | $O(1)$ | $O(k)$    |
+</center>
+
+### Problems
+This blog is to keep log of some basic array manipulation problems collected these days to help understand.
+
+#### (1) Reverse the existing order
+Given one array with integers and the task is building a function that is able to reverse the current order in the list.
+**Idea:** set two iterators start from both sides and swap two values at each iteration. Suppose every array fed to the function is valid.
+**Complexity** $O(n)$ in time, $O(1)$ in space
+```{python}
+class Solution:
+    def reverseOrder(self, array):
+        i = 0
+        j = len(array) - 1
+        while i < j:
+            array[i], array[j] = array[j], array[i]
+            i += 1
+            j -= 1
+        return array
+
+
+if __name__ == '__main__':
+    array = [1, 2, 3, 4, 5]
+    ans = Solution().reverseOrder(array)
+    print(ans)
+```
+
+#### (2) Reorder the array
+This is generalize the the problem that reorder the original array with respect to some simple conditions. Here are some examples.
+
+| problems | rewrite problem |
+|-----------------------------------:|--------------------------------------------:|
+|place all zeros to the end of array | partition the array w.r.t $num > 0$ |
+|put all odd number prior to even numbers| partition the array w.r.t $num\ \%\ 2 == 0$|
+
+This would mostly keep time complexity under $O(n)$ with space complexity at $O(1)$. i.e. without creating new arrays, but disregard the original orders.
+
+**Idea-1:** Create two lists to respectively store odd numbers and even numbers. Concatenate them at the end of function.
+
+**Idea-2:** Set two iterator starting from both sides of the array, swap the values when the conditions are met.
+```{python}
+#  Place all odd numbers prior to the even numbers.
+
+class Solution:
+    def reOrderArray(self, array):
+        # O(1) in time, O(n) in space but original order is kept
+        even = []
+        odd = []
+        for num in array:
+            if num % 2 == 0:
+                even.append(num)
+            else:
+                odd.append(num)
+        return odd + even
+
+    def reOrderArray_free(self, array):
+        # O(1) in time, O(1) in space but original order is violated
+        end = len(array) - 1
+        i = 0
+        while i < end:
+            if array[i] % 2 != 0:
+                i += 1
+            else:
+                array[end], array[i] = array[i], array[end]
+                end -= 1
+        return array
+
+
+if __name__ == '__main__':
+    array = [1, 2, 3, 4, 5]
+    print(Solution().reOrderArray(array))
+    print(Solution().reOrderArray_free(array))
+```
+
+**Idea-1:** swap zeros with other non-zero elements. At every iteration, another loop needed to find another non-zero element.
+
+**Idea-2:** set two iterators starting from both sides and will be swaped when the left one encounter zero while the right one does not.
+```{python}
+# put all zeros in into end
+
+class Solution:
+    def moveZerosEnd(self, array):
+        # O(1) in space, O(n^2) in time
+        j = 0
+        for i in range(len(array)):
+            if array[i] == 0:
+                j = self.find_non_zero(max(i, j), array)
+                if j < len(array):
+                    array[i], array[j] = array[j], array[i]
+            else:
+                continue
+        return array
+
+    def find_non_zero(self, i, array):
+        while i < len(array) and array[i] == 0:
+            i += 1
+        return i
+    # ----------------------------------------------------
+    def moveZerosEnd_unorder(self, array):
+        # O(n) in time O(1) in space
+        i = 0
+        j = len(array) - 1
+        while i < j:
+            if array[j] == 0:
+                j -= 1
+            elif array[i] == 0:
+                array[i], array[j] = array[j], array[i]
+                j -= 1
+                i += 1
+            else:
+                i += 1
+        return array
+
+if __name__ == '__main__':
+    array = [0, 1, 2, 0, 3, 0]
+    ans = Solution().moveZerosEnd_unorder(array)
+    assert id(array) == id(ans)
+    print(ans)
+```
+
+#### (3) Three-way-partition Algorithm
+The above ones are special cases of applications of the three-way-partition algorithm. Two integers representing a range and an array will be given and we are asked to build a function that could partition the array into three parts. i.e. $x \in (-\infty, a)$, $x\in[a,b]$ and $x \in (b, \infty)$. 
+
+**Idea:** Set three iterator, $i,j,k$, where $i$ corresponds to values under $a$ while $k$ corresponds to values above $b$. Let $j$ loop over all values in the array and swap $j$ and $i$ or $k$ when the conditions are met.
+```{python}
+class Solution:
+    def threeWayPartition(self, array, a, b):
+        start = 0
+        i = 0
+        end = len(array) - 1
+        while i < len(array):
+            if array[i] < a:
+                # swap "i" and "start" when array[i] < a and array[start] was in [a,b]
+                array[start], array[i] = array[i], array[start]
+                start += 1
+                i += 1
+            elif array[i] > b:
+                # swap "i" and "end" when array[i] > b, (donot update i to recursively checked value that was at array[end])
+                array[i], array[end] = array[end], array[i]
+                end -= 1
+            else:
+                i += 1
+        return array
+
+
+if __name__ == '__main__':
+    array = [1, 4, 3, 2, 5, 9, 0, 3]
+    print(Solution().threeWayPartition(array, 4, 7))
+
+```
+

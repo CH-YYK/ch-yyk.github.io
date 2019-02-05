@@ -140,27 +140,26 @@ The above ones are special cases of applications of the three-way-partition algo
 ```{python}
 class Solution:
     def threeWayPartition(self, array, a, b):
-        start = 0
-        i = 0
-        end = len(array) - 1
-        while i < len(array):
-            if array[i] < a:
-                # swap "i" and "start" when array[i] < a and array[start] was in [a,b]
-                array[start], array[i] = array[i], array[start]
-                start += 1
-                i += 1
-            elif array[i] > b:
-                # swap "i" and "end" when array[i] > b, (donot update i to recursively checked value that was at array[end])
-                array[i], array[end] = array[end], array[i]
-                end -= 1
-            else:
-                i += 1
-        return array
+      start = 0
+      i = 0
+      end = len(array) - 1
+      while i < len(array):
+          if array[i] < a:
+              # swap "i" and "start" when array[i] < a and array[start] was in [a,b]
+              array[start], array[i] = array[i], array[start]
+              start += 1
+              i += 1
+          elif array[i] > b:
+              # swap "i" and "end" when array[i] > b, (donot update i to recursively checked value that was at array[end])
+              array[i], array[end] = array[end], array[i]
+              end -= 1
+          else:
+              i += 1
+          return array
 
 
 if __name__ == '__main__':
     array = [1, 4, 3, 2, 5, 9, 0, 3]
     print(Solution().threeWayPartition(array, 4, 7))
-
 ```
 

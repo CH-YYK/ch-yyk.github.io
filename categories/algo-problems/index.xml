@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
     <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
-    <lastBuildDate>Fri, 11 Jan 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 05 Feb 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/algo-problems/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Recursion and Dynamic Programming</title>
+      <link>/post/recursion-and-dynamic-programming/</link>
+      <pubDate>Tue, 05 Feb 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/recursion-and-dynamic-programming/</guid>
+      <description>This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing \(f(n)\) by modifying \(f(n-1)\). There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ bottom-up. top-down. half-and-half.  (1) Bottom-Up Approach Starting with solving the problem for a simple case, like a list with one element.</description>
+    </item>
     
     <item>
       <title>Some Array Manipulation Problems</title>

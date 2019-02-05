@@ -7,15 +7,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Largest Square of 1’s from A Matrix - Hello World</title>
-  <meta property="og:title" content="Largest Square of 1’s from A Matrix" />
-  <meta name="twitter:title" content="Largest Square of 1’s from A Matrix" />
-  <meta name="description" content="Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{&#43;}\] and \[j \in [1, 5] \cap \mathbb{N}_{&#43;}\].">
-  <meta property="og:description" content="Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{&#43;}\] and \[j \in [1, 5] \cap \mathbb{N}_{&#43;}\].">
-  <meta name="twitter:description" content="Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 …">
+  <title>Recursion and Dynamic Programming - Hello World</title>
+  <meta property="og:title" content="Recursion and Dynamic Programming" />
+  <meta name="twitter:title" content="Recursion and Dynamic Programming" />
+  <meta name="description" content="This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing \(f(n)\) by modifying \(f(n-1)\). There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ bottom-up. top-down. half-and-half.  (1) Bottom-Up Approach Starting with solving the problem for a simple case, like a list with one element.">
+  <meta property="og:description" content="This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing \(f(n)\) by modifying \(f(n-1)\). There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ bottom-up. top-down. half-and-half.  (1) Bottom-Up Approach Starting with solving the problem for a simple case, like a list with one element.">
+  <meta name="twitter:description" content="This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing …">
   <meta name="author" content="Yikang Yang"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -51,8 +53,8 @@
         "@type": "ListItem",
         "position": 3,
         "item": {
-          "@id": "/post/2018-12-23-largest-sqaure-of-1-from-matrix/",
-          "name": "Largest square of 1’s from a matrix"
+          "@id": "/post/recursion-and-dynamic-programming/",
+          "name": "Recursion and dynamic programming"
         }
     }]
 }
@@ -63,16 +65,17 @@
   "author": {
     "name" : "Yikang Yang"
   },
-  "headline": "Largest Square of 1’s from A Matrix",
-  "description" : "Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp;amp; 1 &amp;amp; 0 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 0 \\ 0 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 &amp;amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{&#43;}\] and \[j \in [1, 5] \cap \mathbb{N}_{&#43;}\].",
+  "headline": "Recursion and Dynamic Programming",
+  "description" : "This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing \(f(n)\) by modifying \(f(n-1)\). There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ bottom-up. top-down. half-and-half.  (1) Bottom-Up Approach Starting with solving the problem for a simple case, like a list with one element.",
   "inLanguage" : "en",
-  "wordCount": 425,
-  "datePublished" : "2018-12-23T00:00:00",
-  "dateModified" : "2018-12-23T00:00:00",
+  "wordCount": 715,
+  "datePublished" : "2019-02-05T00:00:00",
+  "dateModified" : "2019-02-05T00:00:00",
   "image" : "/img/cat.jpeg",
-  "keywords" : [ "Code, Dynamic Programming" ],
-  "mainEntityOfPage" : "/post/2018-12-23-largest-sqaure-of-1-from-matrix/",
+  "keywords" : [ "Code, dynamic-programming" ],
+  "mainEntityOfPage" : "/post/recursion-and-dynamic-programming/",
   "publisher" : {
     "@type": "Organization",
     "name" : "/",
@@ -86,23 +89,24 @@
 }
 </script>
 
-<meta property="og:title" content="Largest Square of 1’s from A Matrix" />
-<meta property="og:description" content="Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{&#43;}\] and \[j \in [1, 5] \cap \mathbb{N}_{&#43;}\].">
+<meta property="og:title" content="Recursion and Dynamic Programming" />
+<meta property="og:description" content="This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing \(f(n)\) by modifying \(f(n-1)\). There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ bottom-up. top-down. half-and-half.  (1) Bottom-Up Approach Starting with solving the problem for a simple case, like a list with one element.">
 <meta property="og:image" content="/img/cat.jpeg" />
-<meta property="og:url" content="/post/2018-12-23-largest-sqaure-of-1-from-matrix/" />
+<meta property="og:url" content="/post/recursion-and-dynamic-programming/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Hello World" />
-  <meta name="twitter:title" content="Largest Square of 1’s from A Matrix" />
-  <meta name="twitter:description" content="Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 …">
+  <meta name="twitter:title" content="Recursion and Dynamic Programming" />
+  <meta name="twitter:description" content="This blog mainly relied on the book, Cracking the coding interviews.
+ Approach to Recursive Problems Recursive solutions are built on solutions to subproblems. This mostly referred to computing …">
   <meta name="twitter:image" content="/img/cat.jpeg" />
   <meta name="twitter:card" content="summary" />
   <link href='../../img/favicon.ico' rel='icon' type='image/x-icon'/>
   <meta property="og:image" content="/img/cat.jpeg" />
   <meta name="twitter:image" content="/img/cat.jpeg" />
   <meta name="twitter:card" content="summary" />
-  <meta property="og:url" content="/post/2018-12-23-largest-sqaure-of-1-from-matrix/" />
+  <meta property="og:url" content="/post/recursion-and-dynamic-programming/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hello World" />
 
@@ -249,7 +253,7 @@
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="post-heading">
               
-                <h1>Largest Square of 1’s from A Matrix</h1>
+                <h1>Recursion and Dynamic Programming</h1>
               
               
               
@@ -257,13 +261,13 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;Posted on December 23, 2018
+  <i class="fas fa-calendar"></i>&nbsp;Posted on February 5, 2019
   
   
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;4&nbsp;minutes
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;425&nbsp;words
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;715&nbsp;words
   
   
     &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang Yang
@@ -289,66 +293,114 @@
         
 
 
-<div id="problem-statement" class="section level3">
-<h3>Problem Statement</h3>
-<p>Find the Largest square of 1’s from a matrix. For example, given a matrix:</p>
-<p><span class="math display">\[
-  M = \left[ \begin{array}{rrrrr}
-  1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 
-  0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 
-  1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 
-  0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\ 
-  \end{array} \right]
-\]</span> Suppose the index set for row and column are <span class="math display">\[i \in [1,4] \cap \mathbb{N}_{+}\]</span> and <span class="math display">\[j \in [1, 5] \cap \mathbb{N}_{+}\]</span>.</p>
-<p>Obviously the largest squre of 1’s in this case could be represented by a set of index tuples <span class="math display">\[\{(i,j)\ |\ i \in \{2, 3, 4\}\ and\ j \in \{2,3,4\}\}\]</span>.</p>
-</div>
-<div id="approach-dynamic-programming" class="section level3">
-<h3>Approach (Dynamic Programming)</h3>
-<p>Let’s see how we could use dynamic programming to solve this problem. Figure out how transition function would be used here. Provided an index set <span class="math inline">\([i, j]\)</span>, suppose we only focus on largest square that have the point <span class="math inline">\(M[i,j]\)</span> and <span class="math inline">\(M[i, j]\)</span> is placed at the right-bottom corner. i.e. the interested square, <span class="math inline">\(\hat{M}_{i,j}\)</span>, that have <span class="math inline">\(M[i,j]\)</span> must follow</p>
-<p><span class="math display">\[
-\hat{M}_{i,j} \subseteq \{(i&#39;,j&#39;)\ |\ i&#39; \leq i\ and\ j&#39; \leq j\}
-\]</span> and the size of <span class="math inline">\(\hat{M}_{i,j}\)</span> is defined by <span class="math inline">\(C_{i,j}\)</span>. Then for a <span class="math inline">\(2\times 2\)</span> sub-matrix of <span class="math inline">\(M\)</span> where the <span class="math inline">\(C_{i-1,j}\)</span>, <span class="math inline">\(C_{i-1,j-1}\)</span>, <span class="math inline">\(C_{i, j-1}\)</span> are given, <span class="math inline">\(C_{i,j}\)</span> will be determined by the minimum values of these three.</p>
 <blockquote>
-<ol style="list-style-type: decimal">
-<li><span class="math inline">\(C_{i,j} = min\{C_{i-1,j}, C_{i-1,j-1}, C_{i, j-1}\} + 1\)</span> if <span class="math inline">\(M_{i,j} = 1\)</span> else <span class="math inline">\(0\)</span>.</li>
-<li><span class="math inline">\(C_{i,j} = M_{i,j}\)</span> if <span class="math inline">\(i=0\)</span> or <span class="math inline">\(j=0\)</span> (The values at first row or first column are initial values)</li>
-</ol>
+<p>This blog mainly relied on the book, <em>Cracking the coding interviews</em>.</p>
 </blockquote>
+<div id="approach-to-recursive-problems" class="section level3">
+<h3>Approach to Recursive Problems</h3>
+<p>Recursive solutions are built on solutions to subproblems. This mostly referred to computing <span class="math inline">\(f(n)\)</span> by modifying <span class="math inline">\(f(n-1)\)</span>. There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:</p>
+<ul>
+<li>bottom-up.</li>
+<li>top-down.</li>
+<li>half-and-half.</li>
+</ul>
+<div id="bottom-up-approach" class="section level4">
+<h4>(1) Bottom-Up Approach</h4>
+<p>Starting with solving the problem for a simple case, like a list with one element. Then figure out how to solve the problem for two elements, then for three elements, and so on.</p>
 </div>
-<div id="codes-python" class="section level3">
-<h3>Codes (python)</h3>
-<p>Here is the python codes with one example. In the first place, remove Nulls for <span class="math inline">\(M\)</span> should at least have 1 row or 1 column. Then initialize <span class="math inline">\(C\)</span> by duplicating <span class="math inline">\(M\)</span>. Update values in <span class="math inline">\(C\)</span> with respect to the transition function above. Finally, find the maximum value in <span class="math inline">\(C\)</span>.</p>
-<pre class="python"><code>class Solution:
-    def largestSquareOf_1(self, m):
-        # eliminate Nulls
-        if len(m) == 0:
-            return 0
-        if len(m[0]) == 0:
-            return 0
-        C = [[j for j in i] for i in m]
-        # update count matrix
-        for i in range(len(m)):
-            for j in range(len(m[0])):
-                if i == 0 or j == 0:
-                    C[i][j] = m[i][j]
-                elif m[i][j] == 0:
-                    C[i][j] = 0
-                else:
-                    C[i][j] = min(C[i-1][j], C[i][j-1], C[i-1][j-1]) + 1
-        # find the maximum value
-        maximum = 0
-        for i in C:
-            maximum = max(maximum, max(i))
-        return maximum
-if __name__ == &#39;__main__&#39;:
-    m = [
-        [1, 1, 0, 1, 0],
-        [0, 1, 1, 1, 0],
-        [1, 1, 1, 1, 0],
-        [0, 1, 1, 1, 1]
-    ]
-    print(Solution().largestSquareOf_1(m))</code></pre>
-<pre><code>## 3</code></pre>
+<div id="top-down-approach" class="section level4">
+<h4>(2) Top-Down Approach</h4>
+<p>The top-down approach can be more complex. In these problems, we think about how we can divide the problem for case <span class="math inline">\(N\)</span> into subproblems. But make sure to be careful of overlap between the cases.</p>
+</div>
+<div id="half-and-half-approach" class="section level4">
+<h4>(3) Half-and-Half Approach</h4>
+<p>In addition to <em>Bottom-up</em> and <em>Top-down</em> approaches, it’s often effective to divide the data set in half. For example, binary search works with “half-and-half” approach. When we loof for an element in a sorted array, we first figure out which half of the array contains the value. Then we recurse and search for it in that half.</p>
+</div>
+</div>
+<div id="recursive-vs.iterative-solutions" class="section level3">
+<h3>Recursive vs. Iterative Solutions</h3>
+<p>Recursive algorithms can be very space inefficient. Each recursive call adds a new layer to the stack, which means if the algorithm recurses to a depth of <span class="math inline">\(n\)</span> it will take at least <span class="math inline">\(O(n)\)</span> memory.</p>
+</div>
+<div id="dynamic-programming-memorization" class="section level3">
+<h3>Dynamic Programming &amp; Memorization</h3>
+<p>Dynamic programming is mostly just matter of taking a <em>recursive algorithm</em> and finding the <em>overlapping subproblems</em>. <em>Some people mostly call top-down dynamic programming “memorization” and only use “dynamic programming” to refer to bottom-up work.</em> Suppose <span class="math inline">\(n\)</span> is the original problem and <span class="math inline">\(1\)</span> is the smallest subproblem.</p>
+<ul>
+<li>Top-down: start from <span class="math inline">\(n\)</span> (top) to <span class="math inline">\(1\)</span> (down).</li>
+<li>Bottom-up: start from <span class="math inline">\(1\)</span> (bottom) to <span class="math inline">\(n\)</span> (up).</li>
+</ul>
+<p>One of the simplest examples of dynamic programming is computing the <em>nth Fibonacci number</em>. A good way to approach the problem is often to implement recursive solution them add memory part.</p>
+<div id="fibonacci-numbers" class="section level4">
+<h4>(1) Fibonacci Numbers</h4>
+<p><span class="math display">\[fib(n) = fib(n-1)+fib(n-2),\ \forall n \geq 3\]</span> and there are <span class="math inline">\(fib(1) = 1\)</span> and <span class="math inline">\(fib(2)=1\)</span>.</p>
+<div id="recursive-solution.-o2n" class="section level5">
+<h5>Recursive solution. <span class="math inline">\(O(2^N)\)</span></h5>
+<pre class="python"><code>def fibonacci(n):
+    if i == 0: return 0
+    if i == 1: return 1
+    return fibonacci(n-1) + fibonacci(n-2)</code></pre>
+</div>
+<div id="recursive-solution-with-memorization-top-down.-on" class="section level5">
+<h5>Recursive solution with memorization (top-down). <span class="math inline">\(O(N)\)</span></h5>
+<pre class="python"><code>def fibonacci(n):
+    memo = [-1] * (n+1)
+    return memoHelper(n, memo)
+  
+def memoHelper(n, memo):
+    if n == 0 or n == 1:
+        return n
+    if memo[n] &gt;= 0:
+        return memo[n]
+    memo[n] = memoHelper(n-1, memo) + memoHelper(n-2, memo)
+    return memo[n]</code></pre>
+</div>
+<div id="dynamic-programming-bottom-up.-on" class="section level5">
+<h5>Dynamic Programming (bottom-up). <span class="math inline">\(O(N)\)</span></h5>
+<pre class="python"><code>def fibonacci(n):
+    memo = [0] * (n+1)
+    memo[1] = 1
+    for i in range(2, n+1):
+        memo[i] = memo[i-1] + memo[i-2]
+    return memo[n]</code></pre>
+</div>
+</div>
+<div id="example-leetcode-198.-house-robber." class="section level4">
+<h4>(2) (Example) LeetCode-198. House Robber.</h4>
+<p><strong>Problem</strong> You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that <strong>adjacent houses</strong> have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.</p>
+<p>Given a list of non-negative integers representing the amount of money of each house, <strong>determine the maximum amount of money you can rob tonight without alerting the police</strong>.</p>
+<p><strong>Analysis</strong> The robber cannot rob two adjacent houses That is, whether the robber will rob the <span class="math inline">\(n\)</span>th house will rely on whether he has robbed the <span class="math inline">\((n-2)\)</span>th house. Firstly, let’s divide the problems into subproblems. The money robbed after <span class="math inline">\(n\)</span>th house will rely on the money robbed after <span class="math inline">\((n-2)\)</span>th and <span class="math inline">\(n\)</span>th. Let <code>rob(n)</code> denote the money acquired after <span class="math inline">\(n\)</span>th house, then we have: <span class="math display">\[rob(n) = max(rob(n-2)+money[n], rob(n-1)), \ \forall n &gt; 2\]</span> where <span class="math display">\[rob(n)=0, \forall n &lt; 0\]</span></p>
+<div id="recursive-solution.-o2n-1" class="section level5">
+<h5>Recursive Solution. <span class="math inline">\(O(2^N)\)</span></h5>
+<pre class="python"><code>def rob(money):
+    return recur(len(money)-1, money)
+def recur(n, money):
+    if n &lt; 0:
+        return 0
+    return max(recur(n-2, money) + money[n], recur(n-1, money))</code></pre>
+</div>
+<div id="recursive-solution-with-memorization-top-down.-on-1" class="section level5">
+<h5>Recursive Solution with memorization (top-down). <span class="math inline">\(O(N)\)</span></h5>
+<pre class="python"><code>def rob(money):
+    n = len(money)
+    memo = [-1] * n
+    return robDFS(n-1, money, memo)
+def robDFS(n, money, memo):
+    if n &lt; 0:
+        return 0
+    if memo[n] &gt;= 0:
+        return memo[n]
+    memo[n] = max(rob(n-2, money, memo) + money[n], rob(n-1, money, memo))
+    return memo[n]</code></pre>
+</div>
+<div id="dynamic-programming-down-up.-on" class="section level5">
+<h5>Dynamic Programming (down-up). <span class="math inline">\(O(N)\)</span></h5>
+<pre class="python"><code>def rob(money):
+    memo = [0] * (len(money) + 2)
+    for i in range(2, n+2):
+        # start from 2 instead of 0, end by n+1 instead of n-1
+        memo[i] = max(memo[i-2] + money[i-2], memo[i-1])
+    return memo[n+1]</code></pre>
+</div>
+</div>
 </div>
 
 
@@ -357,7 +409,7 @@ if __name__ == &#39;__main__&#39;:
             
               <a href="//tags/code/">Code</a>&nbsp;
             
-              <a href="//tags/dynamic-programming/">Dynamic Programming</a>&nbsp;
+              <a href="//tags/dynamic-programming/">dynamic-programming</a>&nbsp;
             
           </div>
         
@@ -373,49 +425,49 @@ if __name__ == &#39;__main__&#39;:
     <ul class="share">
       
       <li>
-        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f&amp;text=Largest%20Square%20of%201%e2%80%99s%20from%20A%20Matrix&amp;via=" target="_blank" title="Share on Twitter">
+        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f&amp;text=Recursion%20and%20Dynamic%20Programming&amp;via=" target="_blank" title="Share on Twitter">
           <i class="fab fa-twitter"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f" target="_blank" title="Share on Google Plus">
+        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f" target="_blank" title="Share on Google Plus">
           <i class="fab fa-google-plus"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f" target="_blank" title="Share on Facebook">
+        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f" target="_blank" title="Share on Facebook">
           <i class="fab fa-facebook"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f&amp;title=Largest%20Square%20of%201%e2%80%99s%20from%20A%20Matrix" target="_blank" title="Share on Reddit">
+        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f&amp;title=Recursion%20and%20Dynamic%20Programming" target="_blank" title="Share on Reddit">
           <i class="fab fa-reddit"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f&amp;title=Largest%20Square%20of%201%e2%80%99s%20from%20A%20Matrix" target="_blank" title="Share on LinkedIn">
+        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f&amp;title=Recursion%20and%20Dynamic%20Programming" target="_blank" title="Share on LinkedIn">
           <i class="fab fa-linkedin"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f&amp;title=Largest%20Square%20of%201%e2%80%99s%20from%20A%20Matrix" target="_blank" title="Share on StumbleUpon">
+        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f&amp;title=Recursion%20and%20Dynamic%20Programming" target="_blank" title="Share on StumbleUpon">
           <i class="fab fa-stumbleupon"></i>
         </a>
       </li>
   
       
       <li>
-        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2f2018-12-23-largest-sqaure-of-1-from-matrix%2f&amp;description=Largest%20Square%20of%201%e2%80%99s%20from%20A%20Matrix" target="_blank" title="Share on Pinterest">
+        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2frecursion-and-dynamic-programming%2f&amp;description=Recursion%20and%20Dynamic%20Programming" target="_blank" title="Share on Pinterest">
           <i class="fab fa-pinterest"></i>
         </a>
       </li>
@@ -432,6 +484,10 @@ if __name__ == &#39;__main__&#39;:
           <h4 class="see-also">See also</h4>
           <ul>
           
+            <li><a href="../../post/2018-12-24-find-longest-succ-path/">Find the Longest Successive Path in a Matrix</a></li>
+          
+            <li><a href="../../post/2018-12-23-largest-sqaure-of-1-from-matrix/">Largest Square of 1’s from A Matrix</a></li>
+          
             <li><a href="../../post/2018-12-23-overlapping-rectangle/">Area of Overlapping Rectangle</a></li>
           
           </ul>
@@ -442,10 +498,10 @@ if __name__ == &#39;__main__&#39;:
       
         <ul class="pager blog-pager">
           
-          
-            <li class="next">
-              <a href="../../post/2018-12-23-overlapping-rectangle/" data-toggle="tooltip" data-placement="top" title="Area of Overlapping Rectangle">Next Post &rarr;</a>
+            <li class="previous">
+              <a href="../../post/2019-01-11-some-array-manipulation-problems/" data-toggle="tooltip" data-placement="top" title="Some Array Manipulation Problems">&larr; Previous Post</a>
             </li>
+          
           
         </ul>
       

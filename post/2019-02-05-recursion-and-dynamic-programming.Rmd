@@ -1,0 +1,126 @@
+---
+title: Recursion and Dynamic Programming
+author: Yikang Yang
+date: '2019-02-05'
+slug: recursion-and-dynamic-programming
+categories: ["Algo Problems"]
+tags: ["Code", "dynamic-programming"]
+---
+
+> This blog mainly relied on the book, *Cracking the coding interviews*.
+
+### Approach to Recursive Problems
+Recursive solutions are built on solutions to subproblems. This mostly referred to computing $f(n)$ by modifying $f(n-1)$. There are many ways to divide the problems into subproblems, but the three most common approaches to develop an algorithm are:
+ 
+ * bottom-up.
+ * top-down.
+ * half-and-half.
+ 
+#### (1) Bottom-Up Approach
+Starting with solving the problem for a simple case, like a list with one element. Then figure out how to solve the problem for two elements, then for three elements, and so on. 
+
+#### (2) Top-Down Approach
+The top-down approach can be more complex. In these problems, we think about how we can divide the problem for case $N$ into subproblems. But make sure to be careful of overlap between the cases.
+
+#### (3) Half-and-Half Approach
+In addition to *Bottom-up* and *Top-down* approaches, it's often effective to divide the data set in half. For example, binary search works with "half-and-half" approach. When we loof for an element in a sorted array, we first figure out which half of the array contains the value. Then we recurse and search for it in that half.
+
+### Recursive vs. Iterative Solutions
+Recursive algorithms can be very space inefficient. Each recursive call adds a new layer to the stack, which means if the algorithm recurses to a depth of $n$ it will take at least $O(n)$ memory.
+
+### Dynamic Programming & Memorization
+Dynamic programming is mostly just matter of taking a *recursive algorithm* and finding the *overlapping subproblems*.
+*Some people mostly call top-down dynamic programming "memorization" and only use "dynamic programming" to refer to bottom-up work.*
+Suppose $n$ is the original problem and $1$ is the smallest subproblem.
+
+ * Top-down: start from $n$ (top) to $1$ (down).
+ * Bottom-up: start from $1$ (bottom) to $n$ (up).
+ 
+
+One of the simplest examples of dynamic programming is computing the *nth Fibonacci number*. A good way to approach the problem is often to implement recursive solution them add memory part.
+
+#### (1) Fibonacci Numbers
+$$fib(n) = fib(n-1)+fib(n-2),\ \forall n \geq 3$$
+and there are $fib(1) = 1$ and $fib(2)=1$.
+
+##### Recursive solution. $O(2^N)$
+```{python}
+def fibonacci(n):
+    if i == 0: return 0
+    if i == 1: return 1
+    return fibonacci(n-1) + fibonacci(n-2)
+```
+
+##### Recursive solution with memorization (top-down). $O(N)$
+```{python}
+def fibonacci(n):
+    memo = [-1] * (n+1)
+    return memoHelper(n, memo)
+  
+def memoHelper(n, memo):
+    if n == 0 or n == 1:
+        return n
+    if memo[n] >= 0:
+        return memo[n]
+    memo[n] = memoHelper(n-1, memo) + memoHelper(n-2, memo)
+    return memo[n]
+```
+
+##### Dynamic Programming (bottom-up). $O(N)$
+```{python}
+def fibonacci(n):
+    memo = [0] * (n+1)
+    memo[1] = 1
+    for i in range(2, n+1):
+        memo[i] = memo[i-1] + memo[i-2]
+    return memo[n]
+``` 
+
+#### (2) (Example) LeetCode-198. House Robber.
+**Problem** You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that **adjacent houses** have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+Given a list of non-negative integers representing the amount of money of each house, **determine the maximum amount of money you can rob tonight without alerting the police**.
+
+**Analysis** The robber cannot rob two adjacent houses That is, whether the robber will rob the $n$th house will rely on whether he has robbed the $(n-2)$th house. Firstly, let's divide the problems into subproblems. The money robbed after $n$th house will rely on the money robbed after $(n-2)$th and $n$th. Let `rob(n)` denote the money acquired after $n$th house, then we have:
+$$rob(n) = max(rob(n-2)+money[n], rob(n-1)), \ \forall n > 2$$
+where $$rob(n)=0, \forall n < 0$$
+
+##### Recursive Solution. $O(2^N)$
+
+```{python}
+def rob(money):
+    return recur(len(money)-1, money)
+
+def recur(n, money):
+    if n < 0:
+        return 0
+    return max(recur(n-2, money) + money[n], recur(n-1, money))
+```
+
+##### Recursive Solution with memorization (top-down). $O(N)$
+```{python}
+def rob(money):
+    n = len(money)
+    memo = [-1] * n
+    return robDFS(n-1, money, memo)
+
+def robDFS(n, money, memo):
+    if n < 0:
+        return 0
+    if memo[n] >= 0:
+        return memo[n]
+    memo[n] = max(rob(n-2, money, memo) + money[n], rob(n-1, money, memo))
+    return memo[n]
+```
+
+##### Dynamic Programming (down-up). $O(N)$
+```{python}
+def rob(money):
+    memo = [0] * (len(money) + 2)
+    for i in range(2, n+2):
+        # start from 2 instead of 0, end by n+1 instead of n-1
+        memo[i] = max(memo[i-2] + money[i-2], memo[i-1])
+    return memo[n+1]
+```
+
+

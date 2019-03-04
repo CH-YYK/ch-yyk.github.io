@@ -1,0 +1,26 @@
+---
+title: "Welcome"
+author: "Yikang Yang"
+date: "3/3/2019"
+output: html_document
+---
+
+
+### Welcome to my site!!
+
+This is the place where I am going to store my projects and log my progress in NLP, algorithms and machine learning, along with some of my projects that are good to visualize. I am currently a student studying **Mathematics and Statistics** in _Georgetown University_ and gonna to graduate in May. My academic interests are _Deep Learning in NLP_ and _Machine Learning_ but comparably prefer mathematical parts. I am also kind of a half-CS student who is into programming and algorithms. I am mainly into C++, python and R sometimes SQL would be involved to deal with large-scale data stuff.
+
+As for Deep learning part, _tensorflow_ is my favorite and the only deeplearnin framework I used. Next possible option would be _caffe_ for C++ when I think I am strong in C++. This site will irregularly upload posts related to _ML_, _NLP_ and sometimes _python_ and _C++_.
+One sentence should be placed in advance that I am not as expert in _C++_ as in _python_, _C++_ part here will be comparably basic.
+
+The posts here will be both in English and Chinese but Chinese would be more likely, I haven't got used to English very well. 
+
+In the end, if you wanna know more about me, check the [about](../../page/about) page where I have recorded my projects and skills. You can view my posts in [Blogs](../../post/) page.
+
+
+#### Project - Shiny: The Shiny Map Built in R
+This interactive map has tagged the location of my school. This was a shiny app that hosted in **shinyapps.io** and I embedded it in a _iframe_ below. This is the most memorable one as it was initially created when I only knew how to code in R in college. The app was developed under using _baidu_ map APIs and have updated to Google APIs after I came here for master degree. 
+
+<iframe src="https://ch-yykzhuifengmu.shinyapps.io/Shiny_Map/" style="left: -100; width: 800px; height: 600px"></iframe>
+
+

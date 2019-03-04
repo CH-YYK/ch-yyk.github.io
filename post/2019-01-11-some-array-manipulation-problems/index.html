@@ -135,19 +135,25 @@
         
           
             <li>
-              <a title="Blog" href="../../">Blog</a>
+              <a title="main" href="../../home">main</a>
             </li>
           
         
           
             <li>
-              <a title="About" href="../../page/about/">About</a>
+              <a title="About" href="../../page/about">About</a>
             </li>
           
         
           
             <li>
-              <a title="Tags" href="../../tags">Tags</a>
+              <a title="Blog" href="../../post/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="../../tags/">Tags</a>
             </li>
           
         
@@ -434,7 +440,7 @@ if __name__ == &#39;__main__&#39;:
 </div>
 <div id="three-way-partition-algorithm" class="section level4">
 <h4>(3) Three-way-partition Algorithm</h4>
-<p>The above ones are special cases of applications of the three-way-partition algorithm. Two integers representing a range and an array will be given and we are asked to build a function that could partition the array into three parts. i.e. <span class="math inline">\(x \in (-\infty, a)\)</span>, <span class="math inline">\(x\in[a,b]\)</span> and <span class="math inline">\(x \in (b, \infty)\)</span>.</p>
+<p>The above ones are special cases of applications of the three-way-partition algorithm. Two integers representing a range and an array will be given and we are asked to build a function that could partition the array into three parts. i.e. <span class="math inline">\(x \in (-\infty, a)\)</span>, <span class="math inline">\(x\in[a,b]\)</span> and <span class="math inline">\(x \in (b, \infty)\)</span>.</p>
 <p><strong>Idea:</strong> Set three iterator, <span class="math inline">\(i,j,k\)</span>, where <span class="math inline">\(i\)</span> corresponds to values under <span class="math inline">\(a\)</span> while <span class="math inline">\(k\)</span> corresponds to values above <span class="math inline">\(b\)</span>. Let <span class="math inline">\(j\)</span> loop over all values in the array and swap <span class="math inline">\(j\)</span> and <span class="math inline">\(i\)</span> or <span class="math inline">\(k\)</span> when the conditions are met.</p>
 <pre class="python"><code>class Solution:
     def threeWayPartition(self, array, a, b):

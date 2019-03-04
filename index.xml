@@ -71,7 +71,7 @@ diagram</description>
       <description>Problem Given two over-lapping rectangles on a plane. And there are bottom-left and top-right points for each rectangle. Assuming every side of each rectangle must be parallel to x-axis or y-axis.
 overlapping-rectangle
  The task is computing the overlapping area.
- Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.</description>
+ Approach Since the order of given points are fixed. i.e. \(Rect_{b_1}\),\(Rect_{t_1}\),\(Rect_{b_2}\), \(Rect_{t_2}\), where \(Rect_{b_i}\) refer to the bottom point of rectangle \(i\) and \(b\Rightarrow bottom\), \(t\Rightarrow top\). The direct approach is sorting four points according both \(x\) and \(y\), then the two points in the middle will define the overlapping rectangle.</description>
     </item>
     
     <item>
@@ -85,12 +85,21 @@ overlapping-rectangle
     </item>
     
     <item>
-      <title>About</title>
+      <title>Something about Me</title>
       <link>/page/about/</link>
       <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
       <author>yikang.yang95@gmail.com (Yikang Yang)</author>
       <guid>/page/about/</guid>
-      <description>This is a &amp;ldquo;hello world&amp;rdquo; example website for the blogdown package. The theme was forked from @jrutheiser/hugo-lithium-theme and modified by Yihui Xie.</description>
+      <description>Education Experience:  [2017.09 - 2019.05] Georgetown University, Mathematics and Statistics, GPA: 3.86/4.0  Related course: Numerical optimization, Probability Theory, Text mining, Intro to Neural Network, Cloud Computing  [2013.09 - 2017.07] Xi’an Jiaotong Liverpool University, Financial Mathematics, First-class Honor.  Related course: Hypothesis Testing, Econometrics, Operational Research, Stochastic Process, Statistical Distribution Theory  Other fundamentals: Calculus, Linear Algebra, Discrete Mathematics.   Skills:  Programming Language: Python (Tensorflow, sklearn), R, C/C++, SQL(MySQL, Postgresql), LaTeX, AWS (EC2, S3), Unix/Linux, git Language: Chinese (native speaker), English (fluent).</description>
+    </item>
+    
+    <item>
+      <title>Welcome</title>
+      <link>/home/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/home/</guid>
+      <description>Welcome to my site!! This is the place where I am going to store my projects and log my progress in NLP, algorithms and machine learning, along with some of my projects that are good to visualize. I am currently a student studying Mathematics and Statistics in Georgetown University and gonna to graduate in May. My academic interests are Deep Learning in NLP and Machine Learning but comparably prefer mathematical parts.</description>
     </item>
     
   </channel>

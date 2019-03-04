@@ -1,0 +1,14 @@
+---
+title: '[C++] My process in building ML from scratch'
+author: ''
+date: '2019-03-04'
+categories: ["Machine Learning","C++"]
+tags: ["code", "math"]
+type: ''
+subtitle: ''
+image: ''
+---
+
+This page will be the stop point to log my process in building ML from scratch in CPP.
+
+#### **[2019-03-03] update matrix operations**

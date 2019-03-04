@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>C&#43;&#43; on Hello World</title>
+    <link>/categories/c&#43;&#43;/</link>
+    <description>Recent content in C&#43;&#43; on Hello World</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
+    <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
+    <lastBuildDate>Mon, 04 Mar 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/c++/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>[C&#43;&#43;] My process in building ML from scratch</title>
+      <link>/post/2019-03-04-c-my-process-in-building-ml-from-scratch/</link>
+      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/2019-03-04-c-my-process-in-building-ml-from-scratch/</guid>
+      <description> This page will be the stop point to log my process in building ML from scratch in CPP.
+[2019-03-03] update matrix operations  </description>
+    </item>
+    
+  </channel>
+</rss>

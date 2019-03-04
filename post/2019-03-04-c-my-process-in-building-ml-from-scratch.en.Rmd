@@ -11,4 +11,6 @@ image: ''
 
 This page will be the stop point to log my process in building ML from scratch in CPP.
 
-#### **[2019-03-03] update matrix operations**
+project posted on my github, [Cpp_for_ML](https://github.com/CH-YYK/Cpp_for_ML)
+
+#### **[2019-03-03] Initialize matrix operations**

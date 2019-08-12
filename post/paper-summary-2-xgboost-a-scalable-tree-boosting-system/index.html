@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Paper-summary-2: XGBoost- A Scalable Tree Boosting System - Hello World</title>
+  <meta property="og:title" content="Paper-summary-2: XGBoost- A Scalable Tree Boosting System" />
+  <meta name="twitter:title" content="Paper-summary-2: XGBoost- A Scalable Tree Boosting System" />
+  <meta name="description" content="Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。">
+  <meta property="og:description" content="Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。">
+  <meta name="twitter:description" content="Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of …">
+  <meta name="author" content="Yikang Yang"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Hello World",
+    
+    "url": "/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "/post/paper-summary-2-xgboost-a-scalable-tree-boosting-system/",
+          "name": "Paper summary 2 x g boost a scalable tree boosting system"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Yikang"
+  },
+  "headline": "Paper-summary-2: XGBoost- A Scalable Tree Boosting System",
+  "description" : "Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。",
+  "inLanguage" : "en",
+  "wordCount": 386,
+  "datePublished" : "2019-08-11T00:00:00",
+  "dateModified" : "2019-08-11T00:00:00",
+  "image" : "/img/cat.jpeg",
+  "keywords" : [ "Math" ],
+  "mainEntityOfPage" : "/post/paper-summary-2-xgboost-a-scalable-tree-boosting-system/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "/img/cat.jpeg",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Paper-summary-2: XGBoost- A Scalable Tree Boosting System" />
+<meta property="og:description" content="Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。">
+<meta property="og:image" content="/img/cat.jpeg" />
+<meta property="og:url" content="/post/paper-summary-2-xgboost-a-scalable-tree-boosting-system/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Hello World" />
+  <meta name="twitter:title" content="Paper-summary-2: XGBoost- A Scalable Tree Boosting System" />
+  <meta name="twitter:description" content="Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of …">
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <link href='../../img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/cat.jpeg" />
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/post/paper-summary-2-xgboost-a-scalable-tree-boosting-system/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hello World" />
+
+  <meta name="generator" content="Hugo 0.52" />
+  <link rel="alternate" href="../../index.xml" type="application/rss+xml" title="Hello World">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="../../css/highlight.min.css" /><link rel="stylesheet" href="../../css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../../">Hello World</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="main" href="../../home">main</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="../../page/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Blog" href="../../post/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="../../tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Categories" href="../../categories">Categories</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Hello World" href="../../">
+            <img class="avatar-img" src="../../img/cat.jpeg" alt="Hello World" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Paper-summary-2: XGBoost- A Scalable Tree Boosting System</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on August 11, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;386&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。</p>
+</div>
+<div id="goal-of-the-paper" class="section level2">
+<h2>Goal of the paper</h2>
+<blockquote>
+<p>Describe a scalable end-to-end tree boosting system called <strong>XGBoost</strong>, which is used widely by data scientist to achieve SOTA results.</p>
+</blockquote>
+<p>这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对<em>稀疏</em>数据的处理方法以及对<em>连续特征</em>的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。</p>
+</div>
+<div id="major-contribution-from-this-paper" class="section level2">
+<h2>Major contribution from this paper</h2>
+<ol style="list-style-type: decimal">
+<li>提出一个highly scalable的端对端提升树系统。</li>
+<li>提出加权版的quantile sketch用来处理连续数据分段。</li>
+<li>提出适合稀疏数据的并行学习算法。</li>
+<li>提出一种高效的缓存结构用来辅助out-of-core learning.</li>
+</ol>
+</div>
+<div id="pre-defined-notations" class="section level2">
+<h2>Pre-defined Notations</h2>
+<p>在正文之前，先来统一一下数学符号以及一些关键性的概念。</p>
+<ul>
+<li><span class="math inline">\(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\)</span> ： 样本数为<span class="math inline">\(n\)</span>的数据集，其中feature的个数为<span class="math inline">\(m\)</span>。</li>
+<li><p><span class="math inline">\(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\)</span> : 第k个feature里的值及对应的二阶导数。</p></li>
+<li><p><span class="math inline">\(K\)</span> : boosting过程中子模型个数。</p></li>
+<li><span class="math inline">\(\mathcal{F} = \{f(\mathbf{x}) = w_{q(\mathbf{x})}\} (q:\mathbb{R}^m \rightarrow T,w\in \mathbb{R}^T)\)</span> : <span class="math inline">\(\mathcal{F}\)</span>为所有回归树的空间，<span class="math inline">\(q\)</span>表示树的一个结构。</li>
+<li><span class="math inline">\(||\mathbf{x}||_0\)</span> : <span class="math inline">\(\mathbf{x}\)</span>中有效元素的个数。</li>
+<li><span class="math inline">\(l\)</span> : 二阶可导的单样本损失函数。</li>
+<li><span class="math inline">\(\mathcal{L}\)</span> : 整个模型的损失函数。</li>
+<li><span class="math inline">\(\mathcal{L}^{(t)}\)</span> : 在第<span class="math inline">\(t\)</span>步模型损失函数。</li>
+<li><span class="math inline">\(\phi (\mathbf{x}_i) = \sum_{k=1}^K f_k(\mathbf{x}_i), f_k \in \mathcal{F}\)</span> : <span class="math inline">\(\phi\)</span>代表最终模型的输出，<span class="math inline">\(f_k\)</span>指构成模型的一系列子模型。</li>
+<li><span class="math inline">\(g_i\)</span> : loss function 对<span class="math inline">\(y_i^{(t-1)}\)</span>的一阶导数。</li>
+<li><span class="math inline">\(h_i\)</span> : loss function 对<span class="math inline">\(y_i^{(t-1)}\)</span>的二阶导数。</li>
+<li><span class="math inline">\(r_k(z) = \frac{1}{\sum_{(x,h)\in \mathcal{D}_k}h}\sum_{(x,h)\in \mathcal{D}_k}h\mathbb{I}(x&lt;z)\)</span> : rank function，feature k中小于z的样本点占的比重。</li>
+<li><p><span class="math inline">\(s_{kj}\)</span> : （quantile）分割点，其中<span class="math inline">\(s_{k1}=min_i \mathbf{x}_{ik}\)</span>，<span class="math inline">\(s_{kl}=max_i\mathbf{x}_{ik}\)</span>。</p></li>
+</ul>
+</div>
+<div id="methodology-part-1-gradient-boosting" class="section level2">
+<h2>Methodology Part-1: Gradient Boosting</h2>
+<div id="a-regularized-learning-objective" class="section level3">
+<h3>(a) Regularized Learning objective</h3>
+<p>模型的损失函数为所有单个样本的损失和。相对与GBDT，XGBoost加入了一个正则项，用来控制树的深度和参数的数值来做到防过拟合。当正则项系数设为0的时候，XGBoost和GBDT在优化方向方面是一致的。加入正则化后，模型的损失函数变成了 <span class="math display">\[\mathcal{L}(\phi) = \sum_i l(\hat{y_i}, y_i) + \sum_k \Omega(f_k)\]</span> <span class="math display">\[\Omega(f) = \gamma T + \frac{1}{2}\lambda ||w||^2\]</span></p>
+</div>
+<div id="b-gradient-tree-boosting" class="section level3">
+<h3>(b) Gradient Tree Boosting</h3>
+<p>XGBoost本质还是一个梯度提升树，所以训练loss的时候跟GBDT有很大一部分是相似的。例如同为加法模型，在每一步迭代（假设当前为<span class="math inline">\(t\)</span>步），我们需要找到一个<span class="math inline">\(f_t\)</span>，来使得当前loss最小 <span class="math display">\[\mathcal{L}^{(t)} = \sum_i l(\hat{y_i}, y_i^{(t-1)} + f_t(\mathbf{x}_i)) + \Omega(f_t)\]</span> 但是在加速收敛方面，GBDT采用的是first-order approximation，对loss做了关于<span class="math inline">\(y_i^{(t-1)}\)</span>的一阶泰勒展开，而XGBoost采用的是second-order approximation，对loss做了二阶泰勒展开。列在一起对比如下（当然GBDT是没有regularized部分的）</p>
+<p><span class="math display">\[
+\mathcal{L}^{(t)} \approxeq \sum_{i=1}^nl(y_i, \hat{y_i}^{(t-1)}) + g_if_t(\mathbf{x}_i) + \Omega(f_t)
+\]</span><span class="math display">\[
+\mathcal{L}^{(t)} \approxeq \sum_{i=1}^nl(y_i, \hat{y_i}^{(t-1)}) + g_if_t(\mathbf{x}_i) + \frac{1}{2}h_if_t^2(\mathbf{x}_i) + \Omega(f_t)
+\]</span> 在针对<span class="math inline">\(f_t(x)\)</span> 进行优化的时候，两个式子的首项都与<span class="math inline">\(f_t\)</span>无关，所以我们都可以提前将他们删掉。因此GBDT最后的优化目标即为每一步残差的一阶导数，而XGBoost则同时拥有一阶及二阶导数。两者在最终结果上应该是一致的，但是不同approximation方式使得XGBoost的收敛速度变得快了几分。两者的算法对比可以参考梯度下降法和牛顿法的对比。</p>
+<p>最后将<span class="math inline">\(\Omega(f_t)\)</span>代入式子，并去掉首项的常数项，我们最后获得一个关于<span class="math inline">\(f_t\)</span>的函数，并把<span class="math inline">\(f_t(\mathbf{x}_i) = w_{q(\mathbf{x})}\)</span>也代入，依照树模型的原理，每一个<span class="math inline">\(\mathbf{x}_i\)</span>会被分到一个区间内，对应的模型输出为<span class="math inline">\(w_j\)</span>。描述的比较抽象但是写出来还是蛮清晰的。 <span class="math display">\[\begin{array}{ll}
+\bar{\mathcal{L}}^{(t)}=&amp;\sum_{i=1}^n[g_if_t(\mathbf{x}_i) + \frac{1}{2}h_if_t^2(\mathbf{x}_i)] + \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2\\
+\bar{\mathcal{L}}^{(t)}=&amp;\sum_{j=1}^T[(\sum_{i\in I_j}g_i)w_j+\frac{1}{2}(\sum_{i\in I_j}h_i + \lambda)w_j^2] + \gamma T
+\end{array}\]</span> <span class="math inline">\(w_j\)</span>就是我们要获得的用来定义<span class="math inline">\(f_t\)</span>的模型参数，所以现在既然已有了函数，我们可以直接对<span class="math inline">\(w_j\)</span>求导来得到关于<span class="math inline">\(w_j\)</span>的极值点。 <span class="math display">\[
+w_j^* = -\frac{\sum_{i \in I_j}g_i}{\sum_{i\in I_j}h_i + \lambda}
+\]</span> 代入上式我们即获得 <span class="math display">\[
+\bar{\mathcal{L}}^{(t)}=-\frac{1}{2}\sum_{j=1}^T\frac{(\sum_{i\in I_j}g_i)^2}{\sum_{i\in I_j}h_i+\lambda} + \gamma T
+\]</span> 以上，我们获得了一个新的loss function，而这个function除了<span class="math inline">\(T\)</span>以外，只与一阶导数和二阶导数有关。而作为树模型，同样也有一个类似于信息增益那样基于loss reduction的分割子数的评价标准。假设当前feature被分为<span class="math inline">\(I_L\)</span>和<span class="math inline">\(I_R\)</span>而且有<span class="math inline">\(I_j = I_L \cup I_R\)</span>，那么对应的loss reduction即为 <span class="math display">\[
+\mathcal{L}_{split} = \frac{1}{2}[\frac{(\sum_{i\in I_L}g_i)^2}{\sum_{i\in I_L}h_i+\lambda} + \frac{(\sum_{i\in I_R}g_i)^2}{\sum_{i\in I_R}h_i+\lambda}-\frac{(\sum_{i\in I_j}g_i)^2}{\sum_{i\in I_j}h_i+\lambda}]
+\]</span> 该式子在形式还是挺直观，在本质上与信息增益等传统方法工作原理是一样的。分割用的特征以及分割点需要使loss reduction最大。</p>
+</div>
+<div id="cc-techniques-to-avoid-over-fitting" class="section level3">
+<h3>(cc) Techniques to Avoid over-fitting</h3>
+<p>为了解决过拟合，除了正则化项，XGBoost同时还加入了两种“传统”办法，所谓传统就是之前模型中出现的方法。 例如：</p>
+<ol style="list-style-type: decimal">
+<li>Shringkage: 出自GBDT，简单原理就是在boosting过程中，当准备加入一棵新树的来更新模型残差的时候，工作原理类似梯度下降法中的step size。</li>
+<li>Column（feature） Subsampling： 出自random forest，指的是在基于某个feature进行树分割的时候，只对一部分feature值进行遍历。因为遍历的点少了，所以这个方法同时还能加速计算。</li>
+</ol>
+</div>
+</div>
+<div id="methodology-part-2-split-finding-algorithm" class="section level2">
+<h2>Methodology Part-2: Split Finding Algorithm</h2>
+<div id="a.-exact-greedy-algorithm" class="section level3">
+<h3>(a.) Exact Greedy Algorithm</h3>
+<p>构建树模型的时候最重要的仍旧是分割点的搜寻问题。最直接的办法还是Exact Greedy Search，也就是在要分割的时候测试每一个feature的每一个样本点，选择loss reduction最大的那个feature及相应的样本点作为分割点。paper中提供了一个XGBoost版的： <!--[外链图片转存失败(img-civtBjL5-1564135306008)(images/exact_greedy_algo.png)]--> 这个算法是要求我们算出每个feature的在每个点分割后，产生的loss reduction，在这里预先对feature里的值进行排序使这个搜索过程变成y一个动态规划的过程。降低了求loss reduction的成本。虽然排序的过程很耗时间，但XGBoost的一个系统层面上的优化点，就是预先对所有的feature进行了排序并存储。</p>
+</div>
+<div id="b.-approximate-algorithm" class="section level3">
+<h3>(b.) Approximate Algorithm</h3>
+<p>与上面提到的Exact greedy算法不同，为了高效处理数据我们很多时候不太可能对所有feature所有点进行遍历。Approximate Algorithm就是为了在不影响整体结果的情况下，适当地对feature进行重组，分成好多个bucket，每个bucket里输出一个可以代表整个bucket的整合后的值。这样我们在进行搜索的时候，只需要测试这几个bucket的值就可以了。对应的XGBoost版本为：</p>
+<!--[外链图片转存失败(img-8NLtrtgM-1564135306012)(images/approximately_algo.png)]-->
+<p>请注意算法中提到的了<strong>global</strong>和<strong>local</strong>，这里指的是分桶的时候的两种变体。</p>
+<ul>
+<li>Global： 每个feature分好bucket后，在接下来每次split finding的时候，都用这次分好的bucket。</li>
+<li>Local： 每次split finding的时候，额外分一次bucket。</li>
+</ul>
+</div>
+<div id="c.-weighted-quantile-sketch" class="section level3">
+<h3>(c.) Weighted Quantile Sketch</h3>
+<p>分桶的过程还是挺讲究的。分桶时候还是要保证不会对模型的质量产生影响的，所以要确保各个桶里的样本点产生的loss是接近的，这样在分割后不会出现左子树和右子树loss不平衡。当各个样本点产生的loss的权重相等时，可以用一个叫quantile sketch的方法来分桶。但是在paper中，作者提出了一个改进方法，首先将XGBoost的loss function重写成了weighted loss的形式 <span class="math display">\[
+\sum_{i=1}^n\frac{1}{2} h_i(f_t(\textbf{x}_i)-\frac{g_i}{h_i})^2+\Omega(f_t) + constant
+\]</span> 可以看出<span class="math inline">\(h_i\)</span>在这里扮演了个类似权重的作用。可以理解为每个样本点产生的对bucket产生的loss不是等价的。为了配合这种表达，作者顺便提出了一个weighted quantile sketch算法来解决这个问题。由于这部分内容并没有在paper中说明，有需要可以参考作者批注的<a href="http://homes.cs.washington.edu/tqchen/pdf/xgboost-supp.pdf">supplementary material</a>。</p>
+<p>另外，作者还是提供了明确的数学定义来描述算法的目的。假设手上有<span class="math inline">\(\mathcal{D}_k\)</span>，以及阈值<span class="math inline">\(\epsilon\)</span>，算法的目的为找到一组quantile的分割点，<span class="math inline">\(\{s_{k1},s_{k2},s_{k3},...s_{kl}\}\)</span>使 <span class="math display">\[|r_k(s_{k,j})-r_k(s_{k,j+1})| &lt; \epsilon\]</span> 可以估计，大约有<span class="math inline">\(1/\epsilon\)</span>个分割点。参照前面列出来的<span class="math inline">\(r_k\)</span>的定义，权重是由<span class="math inline">\(h_i\)</span>来构定义的，分母是一个normalization项从而使<span class="math inline">\(r_k\)</span>的输出为一个分数。</p>
+</div>
+<div id="d.-sparsity-aware-split-finding." class="section level3">
+<h3>(d.) Sparsity-aware split finding.</h3>
+<p>这部分主要是讲解如何处理缺失值的，我认为非常有借鉴意义。虽然名字里带着sparsity（稀疏），但是产生的原因主要也是因为存在缺失点。作者在这里的处理方式很巧妙，大致可以归纳为：</p>
+<ul>
+<li>只处理非缺失的部分。</li>
+<li>假设missing data会被分到右边，并得出最优的模型以及score。</li>
+<li>假设missing data会被分到左边，并得出最优的模型以及score。</li>
+<li>比较两个score，得z最优模型及最佳missing value的默认方向。</li>
+</ul>
+<p>算法截图为 <!--[外链图片转存失败(img-fY9vkeYQ-1564135306013)(images/sparsity-aware-algo.png)]--></p>
+</div>
+</div>
+<div id="system-design" class="section level2">
+<h2>System Design</h2>
+<p>这部分讲的全是系统层面上的优化，主要包括XGBoost在分布式下的并行实现。同时也是我读的最吃力的地方。由于非计算机科班我就不对这些描述太多了。主要贡献包括 - block structure: 预存各个特征的排序结j及相应index来优化split finding - cache-aware access: 来达到高速访问缓存，来实现依照index快速调取gradient的目的。</p>
+<div id="time-complexity-analysis" class="section level3">
+<h3>Time complexity analysis</h3>
+<p>如题： 假设一共需要K个子模型，每个模型由一个深度为d的树构成。那么paper中列举的算法复杂度为.</p>
+<ol style="list-style-type: decimal">
+<li>Exact Greedy Algorithm, <span class="math inline">\(O(Kd||\mathbf{x}||_0logn)\)</span>
+<ul>
+<li><span class="math inline">\(Kd\)</span>次split finding。</li>
+<li><span class="math inline">\(||x||_0\)</span>个有效元素需要被排序。</li>
+<li>被排序元素大概需要遍历<span class="math inline">\(logn\)</span>步</li>
+</ul></li>
+<li>Tree boosting + block structure, <span class="math inline">\(O(Kd||\mathbf{x}||_0 + ||\mathbf{x}||_0logn)\)</span>
+<ul>
+<li><span class="math inline">\(Kd\)</span>次split finding，以及每次<span class="math inline">\(||\mathbf{x}||_0\)</span>次遍历。</li>
+<li>对<span class="math inline">\(\mathbf{x}\)</span>进行一次排序，<span class="math inline">\(||\mathbf{x}||_0logn\)</span>。</li>
+</ul></li>
+<li>Approximate Algorithm， 假设q个quantile，<span class="math inline">\(O(Kd||\mathbf{x}||_0logq)\)</span>
+<ul>
+<li>由于这次其实只有<span class="math inline">\(q\)</span>值元素在被排序，所以替换为<span class="math inline">\(logq\)</span>，其余与exact greedy 保持一致。</li>
+</ul></li>
+<li>Approximate Algorithm using block structure，假设每个Block中有<span class="math inline">\(B\)</span>行，<span class="math inline">\(O(Kd||\mathbf{x}||_0 + ||\mathbf{x}||_0logB)\)</span>
+<ul>
+<li>每个block中只有<span class="math inline">\(B\)</span>个元素被排序，所以为<span class="math inline">\(logB\)</span>，其余与2保持一致。</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div id="conclusion." class="section level2">
+<h2>Conclusion.</h2>
+<p>作者同时从数学及计算机的角度对Boosting tree的方法进行了优化，整个paper的信息量还是挺大的，尤其是system design的部分对操作系统方面也是有要求的。本质上XGBoost还是一个gradient boosting tree，在后面的算法对比中XGBoost也在不同任务里，与GBDT达到了同等高度的模型准确度，但是在这么多优化方法下，时间效率上以及资源利用率上提升了非常多。</p>
+</div>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="//tags/math/">Math</a>&nbsp;
+            
+          </div>
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f&amp;text=Paper-summary-2%3a%20XGBoost-%20A%20Scalable%20Tree%20Boosting%20System&amp;via=" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f" target="_blank" title="Share on Google Plus">
+          <i class="fab fa-google-plus"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f&amp;title=Paper-summary-2%3a%20XGBoost-%20A%20Scalable%20Tree%20Boosting%20System" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f&amp;title=Paper-summary-2%3a%20XGBoost-%20A%20Scalable%20Tree%20Boosting%20System" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f&amp;title=Paper-summary-2%3a%20XGBoost-%20A%20Scalable%20Tree%20Boosting%20System" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2fpaper-summary-2-xgboost-a-scalable-tree-boosting-system%2f&amp;description=Paper-summary-2%3a%20XGBoost-%20A%20Scalable%20Tree%20Boosting%20System" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+              </div>
+            </section>
+        
+
+        
+          
+          
+          <h4 class="see-also">See also</h4>
+          <ul>
+          
+            <li><a href="../../post/2018-12-23-overlapping-rectangle/">Area of Overlapping Rectangle</a></li>
+          
+          </ul>
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="../../post/setup-rstudio-server-and-shiny-server-on-aws-ec2/" data-toggle="tooltip" data-placement="top" title="Setup Rstudio Server and Shiny Server on AWS EC2">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="../../post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/" data-toggle="tooltip" data-placement="top" title="Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:yikang.yang95@gmail.com" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/Yikang%20Yang" title="Facebook">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/CH-YYK" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/yikang-yang-158162155" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="../../index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="yourwebsite.com">Yikang Yang</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2019
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="../../">Hello World</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.52</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="../../js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
+

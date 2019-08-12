@@ -221,6 +221,130 @@
           
           
             <article class="post-preview">
+              <a href="./post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/">
+                <h2 class="post-title">Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping</h2>
+                
+                
+              </a>
+
+              <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on August 11, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;222&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              <div class="post-entry">
+                
+                  ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i+1}, ..., t_{i+k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。
+                  <a href="./post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/" class="post-read-more">[Read More]</a>
+                
+              </div>
+
+              
+                <div class="blog-tags">
+                  
+                    <a href="//tags/dynamic-programming/">Dynamic Programming</a>&nbsp;
+                  
+                </div>
+              
+            </article>
+          
+            <article class="post-preview">
+              <a href="./post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system/">
+                <h2 class="post-title">Paper-summary-2: XGBoost- A Scalable Tree Boosting System</h2>
+                
+                
+              </a>
+
+              <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on August 11, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;387&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              <div class="post-entry">
+                
+                  Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。
+                  <a href="./post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system/" class="post-read-more">[Read More]</a>
+                
+              </div>
+
+              
+                <div class="blog-tags">
+                  
+                    <a href="//tags/math/">Math</a>&nbsp;
+                  
+                </div>
+              
+            </article>
+          
+            <article class="post-preview">
+              <a href="./post/setup-rstudio-server-and-shiny-server-on-aws-ec2/">
+                <h2 class="post-title">Setup Rstudio Server and Shiny Server on AWS EC2</h2>
+                
+                
+              </a>
+
+              <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on April 16, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;1&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;93&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              <div class="post-entry">
+                
+                  In people’s traditional views, R always comes along with analysis and statistics. As R users, we all knew that R is not only a local software limited to analysis toolkit but has some powerful features to do fancy things. Thanks to Rstudio team who helped develop fundaments for R community, like Rstudio server for group project and shiny server for hosting shiny apps. Here are some experiences or traps I have encountered in setting these two servers on EC2.
+                  <a href="./post/setup-rstudio-server-and-shiny-server-on-aws-ec2/" class="post-read-more">[Read More]</a>
+                
+              </div>
+
+              
+            </article>
+          
+            <article class="post-preview">
               <a href="./post/2019-03-04-c-my-process-in-building-ml-from-scratch/">
                 <h2 class="post-title">[C&#43;&#43;] My process in building ML from scratch</h2>
                 
@@ -540,52 +664,17 @@ overlapping-rectangle
               
             </article>
           
-            <article class="post-preview">
-              <a href="./post/2018-12-23-largest-sqaure-of-1-from-matrix/">
-                <h2 class="post-title">Largest Square of 1’s from A Matrix</h2>
-                
-                
-              </a>
-
-              <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on December 23, 2018
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;425&nbsp;words
-  
-  
-    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang Yang
-  
-  
-</span>
-
-
-              <div class="post-entry">
-                
-                  Problem Statement Find the Largest square of 1’s from a matrix. For example, given a matrix:
-\[ M = \left[ \begin{array}{rrrrr} 1 &amp; 1 &amp; 0 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 1 &amp; 1 &amp; 1 &amp; 1 &amp; 0 \\ 0 &amp; 1 &amp; 1 &amp; 1 &amp; 1 \\ \end{array} \right] \] Suppose the index set for row and column are \[i \in [1,4] \cap \mathbb{N}_{+}\] and \[j \in [1, 5] \cap \mathbb{N}_{+}\].
-                  <a href="./post/2018-12-23-largest-sqaure-of-1-from-matrix/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-                <div class="blog-tags">
-                  
-                    <a href="//tags/code/">Code</a>&nbsp;
-                  
-                    <a href="//tags/dynamic-programming/">Dynamic Programming</a>&nbsp;
-                  
-                </div>
-              
-            </article>
-          
         </div>
 
+        
+          <ul class="pager main-pager">
+            
+            
+              <li class="next">
+                <a href="./page/2/">Older Posts &rarr;</a>
+              </li>
+            
+          </ul>
         
       </div>
     </div>

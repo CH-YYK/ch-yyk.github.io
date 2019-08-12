@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Setup on Hello World</title>
+    <link>/tags/setup/</link>
+    <description>Recent content in Setup on Hello World</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
+    <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
+    <lastBuildDate>Tue, 16 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/setup/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Setup Rstudio Server and Shiny Server on AWS EC2</title>
+      <link>/post/setup-rstudio-server-and-shiny-server-on-aws-ec2/</link>
+      <pubDate>Tue, 16 Apr 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/setup-rstudio-server-and-shiny-server-on-aws-ec2/</guid>
+      <description>In people’s traditional views, R always comes along with analysis and statistics. As R users, we all knew that R is not only a local software limited to analysis toolkit but has some powerful features to do fancy things. Thanks to Rstudio team who helped develop fundaments for R community, like Rstudio server for group project and shiny server for hosting shiny apps. Here are some experiences or traps I have encountered in setting these two servers on EC2.</description>
+    </item>
+    
+  </channel>
+</rss>

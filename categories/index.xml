@@ -40,9 +40,18 @@
     </item>
     
     <item>
+      <title>Data Science</title>
+      <link>/categories/data-science/</link>
+      <pubDate>Sun, 11 Aug 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/categories/data-science/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Machine Learning</title>
       <link>/categories/machine-learning/</link>
-      <pubDate>Mon, 04 Mar 2019 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 11 Aug 2019 00:00:00 +0000</pubDate>
       <author>yikang.yang95@gmail.com (Yikang Yang)</author>
       <guid>/categories/machine-learning/</guid>
       <description></description>

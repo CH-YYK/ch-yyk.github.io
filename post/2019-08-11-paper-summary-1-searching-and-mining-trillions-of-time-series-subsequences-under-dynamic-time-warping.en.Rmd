@@ -1,0 +1,91 @@
+---
+title: 'Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences
+  under Dynamic Time Warping'
+author: "Yikang"
+date: "2019-08-11"
+slug: paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping
+tags: ["Dynamic Programming"]
+categories: ["Data Science","Machine Learning"]
+---
+
+> ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+
+首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。
+在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+
+## How does DTW (Dynamic Time Warping) work
+
+**Explaination:**假设已知两个序列$X$和$Y$，长度分别为$M$和$N$。当$M=N$的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 $M×N$ 对点，也就是$M×N$个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 $Cost \in R^{M\times N}$，在这里元素$Cost_{i,j}$ 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为$cost$），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于$（0,0）$终于$（M-1，N-1）$而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+
+#### Definitions and Notations
+
+- **Definition-1:** 定义有序序列 $T = t_1, t_2, ..., t_m$。由于$T$很长，所以我们会用它的子序列来作比较。
+- **Definition-2:** 定义序列 $T_{i,k} = t_i, t_{i+1}, ..., t_{i+k-1}$为长度为$k$，起始于$t_i$的$T$的子序列。
+- **Definition-3:** 假设有序列$Q$和$C$，当$|Q|=|C|$时，定义$Q$和$C$之间的Euclidean distance (ED) 为：
+$$
+ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
+$$
+
+为避免产生歧义，用$C$来表示$T_{i,k}$作为用来比较的子序列，用$Q$来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。
+
+<!-- [外链图片转存失败(img-DiTn7EWl-1563226828525)(./images/image-1.png)]-->
+
+如图所示的红线便是需要找到的“目标路径”，它有一个专有的名词叫warping path。而、依照不同场景的要求，可以对search的区间设置上下界，例如：$Q_i$ 最多只与$C_{i-w}$到$C_{i+w}$这系列点进行配对。这时候相当于搜索在连续地用X与Y的subsequences来进行比较（绿线的作用）。
+
+## Known ways to compute DTW
+
+首先paper列举了为计算DTW或ED已知并且常用的几种优化方法：
+
+1. 使用平方形式的距离度量。
+    > Euclidean和DTW在之前一直用的是平方根，开根号的话还是多了一步操作，而平方形式与平方根形式有相同的单调性，而且都是凸函数，只要数值不爆掉（normalized 之后应该不会），用平方根是足够了。
+2. 使用Lower Bounding。
+    > 以DTW为例，计算的时间复杂度大概为 $O(MN)$，M和N分别为两个序列长度。但如果我们不要求一个精确的结果时，可以用一些更容易计算的结果来approximately代替DTW，例如LB_KimFL计算的是第一个（最后一个）数据对的距离，这时候时间复杂度为O(1).
+3. 使用Early abandoning。
+    > Early abandoning 依照字面意思就是我们提前停止计算DTW。假设我们有一个心理预期的$cost = b$，由于搜索计算DTW的时候cost是个递增过程，如果当前cost已经高于预期的$b$的时候，再做复杂的搜索已经没有意义了。所以后半段可以直接用lower bound来替代。
+
+在这些之前还有一个隐含的假设条件，那就是要被比较的序列应被提前（高斯）标准化（Z-normalized），而且若在计算DTW的过程中涉及到比较subsequence的时候，该subsequence也需要各自标准化（不能用全局$\mu$ 和 $\sigma$ 来标准化）。这种高效处理连续子数列的方法一般都可以用贪婪算法或者sliding window来搞定，这些同样也在paper里被提了出来。
+
+## Innovative optimization methods provided from paper
+作者创新的优化方法 （UCR suite）
+
+1. Early abandoning Z-normalization
+2. Reordering Early Abandoning
+3. Reversing the Query/Data Role in LB_Keogh
+4. Cascading Lower Bounds.
+
+现在一个一个来
+
+#### 1. Early abandoning Z-normalization
+依照作者在隐藏假设条件，涉及到算距离的时候需要对子序列分别进行Z-normalization，这部分可能比算加入early abandoning的Euclidean distance计算复杂度更高。作者还在paper里感慨，“之前一直没有人做这方面的优化”。此处作者的优化点在于在算*Euclidean Distance*或者*$LB_{Keogh}$*时候嵌入了early abandoning。
+
+算法伪代码如下图。
+
+<!-- [外链图片转存失败(img-Ml6KLYqb-1563226828526)(./images/algo-1.png)] -->
+
+在line 10的条件里加入了与best-so-far的比较，若超过则停下。最后下来的结果是我们从C中找到了一个subsequence与Q距离最短。
+
+#### 2. Reordering Early Abandoning
+
+这一条其实还是离不开early abandoning的范畴，以ED为例，如果已经有一个best-so-far的距离的话 （假设为$b$），我们只需要知道$C$中存在一部分点，而且这部分点与$Q$中对应点的之间的距离已经超过了$b$的话，我们就没有必要再测别的了。
+<!-- [外链图片转存失败(img-QaHEEw2X-1563226828527)(./images/image-2.png)] -->
+
+所以作者提出，我们从*最大的距离*开始加而不是从*第一个*点开始算，这样也许只需要算很少的一部分点就可以让程序终止了。也是一个不错的pruning off的方法。
+
+#### 3. Reversing the Query/Data Role in LB_{Keogh}
+一切为了pruning！！平常用来算$LB_{Keogh}$时候是找围绕着$Q$的$\{U,L\}$，毕竟query一般比较短嘛，这样只需要算一次就好，省时省力，暂时用$LB_{Keogh}EQ$来表示。不过如果当$LB_{Keogh}EQ$无法做到快ppruning的话，就需要一些alternative了。作者在这里提议，偶尔可以算一下围绕着$C$的$\{U,L\}$的$LB_{Keogh}$，记为$LB_{Keogh}EC$。只有当pruning效果更好的时候才会这样替换，这样即使花“时间精力”重新算，pruning掉的时间也值得了，（可惜在这里没有看到更多的细节）。
+
+
+#### 4.Cascading Lower Bounds.
+Lower Bounds算法有好多种，而且与最后要的DTW相似程度与算法复杂度是成正比的，也就是Lower Bound越复杂最后结果就越精确（以算DTW为目标）。paper里有个线图很直接。
+<!-- [外链图片转存失败(img-7LKTjZS1-1563226828528)(./images/image-3.png)]-->
+
+当然lower bound不仅仅是图上有的这些，但在选lower bound的时候倾向于选择跟DTW更近，而且复杂度尽量低。图上的虚线相当于一个临界，一个好的lower bound至少要落在这条虚线上。
+
+当需要决定用哪个的时候，作者提出：所有都用，一个一个来，先从最弱的开始。算法设计合理的话这几个Lower bound基本上都可以同时在一次迭代中计算出来，如果其中任意Lower-bound超过了best-so-far，就可以直接停下。因此理论上可以将复杂度控制在$O(1)$和$O(n)$之间。最后若这些Bounds都未能超过best-so-far，那就可以开始算DTW with early abandoning。
+
+## Conclusion
+
+因为专业不算计算机科班，里面还有很多概念不是很懂，尤其是涉及到算法复杂度这里。但总的来说，整篇paper给我的感觉就像是在牺牲精度换取时间。不过paper里还有写，若是那种对精度要求高的数据集，等还是得等的。根据作者的实验结果，paper中的优化策略在时间上的优化程度还是相当明显的，而且作者也测试了好多数据集。我个人比较遗憾的点在于，作者的优化方向集中在算Euclidean distance或Lower bound上，倒是没有特别多着重在DTW上。
+
+## Reference:
+Rakthanmanon, T., Campana, B., Mueen, A., Batista, G., Westover, B., Zhu, Q., Zakaria, J. and Keogh, E., 2012, August. [Searching and mining trillions of time series subsequences under dynamic time warping](https://www.researchgate.net/profile/Thanawin_Rakthanmanon/publication/241770605_Searching_and_mining_trillions_of_time_series_subsequences_under_dynamic_time_warping/links/02e7e532bb3c110fae000000/Searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping.pdf). In Proceedings of the 18th ACM SIGKDD international conference on Knowledge discovery and data mining (pp. 262-270). ACM.

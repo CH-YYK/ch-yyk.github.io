@@ -4,52 +4,63 @@ date: "2016-05-05T21:48:51-07:00"
 ---
 
 #### Education Experience:
-  * [2017.09 - 2019.05] **Georgetown University**, _Mathematics and Statistics_, **GPA**: 3.86/4.0
-    * **Related course**: Numerical optimization, Probability Theory, Text mining, Intro to Neural Network, Cloud Computing
+  * **Georgetown University** (Graduated), 
+    * 2017.09 - 2019.05
+    * *Major*: _Mathematics and Statistics_, 
+    * *GPA*: 3.86/4.0
+    * *Related course* (subset): 
+      * Deterministic Mathematical Models
+      * Numerical optimization
+      * Probability Theory
+      * Text mining
+      * Intro to Neural Network
+      * Cloud Computing
+      * Mathematical Statistics
     
-  * [2013.09 - 2017.07] **Xi'an Jiaotong Liverpool University**, _Financial Mathematics_, **First-class Honor**.
-    * **Related course**: Hypothesis Testing, Econometrics, Operational Research, Stochastic Process, Statistical Distribution Theory
+  * **Xi'an Jiaotong Liverpool University**, 
+    * 2013.09 - 2017.07
+    * *Major*: _Financial Mathematics_, *First-class Honor*.
+    * *Related course*: 
+      * Hypothesis Testing, 
+      * Econometrics, 
+      * Operational Research, 
+      * Stochastic Process, 
+      * Statistical Distribution Theory
   
   - **Other fundamentals**: Calculus, Linear Algebra, Discrete Mathematics.
-
+  
 ---
 
 #### Skills:
-
-* **Programming Language**: **Python (Tensorflow, sklearn)**, R, **C/C++**, SQL(MySQL, Postgresql), LaTeX, AWS (EC2, S3), Unix/Linux, git
-* **Language**: Chinese (native speaker), English (fluent).
-
----
-
-#### Projects
-
-##### 1>- Hierarchical-BiLSTM Classifier of Sentiment on businesses on Yelp
-    key words: Tensorflow, Attention, Hierarchical-BiLSTM, numpy, fasttext, DeepWalk.
-
-* Parsed raw Json dataset and merged data on business ID; Processed texts, over-sampled dataset to resolve imbalanced classes distribution; Stored and shared data on AWS S3.
-
-* Extracted TFIDF features for baselines (LR, NB, SVM from sklean) and fasttext embedding for Deep Learning model; Represented businesses tags/categories in a graph and trained graph-based representations by DeepWalk.
-  
-* Used Tensorflow to build bi-LSTM sentiment classifier in a hierarchical-based structure on texts along with pooled tag embeddings via self-attention. And increase the F1-score by 20\% over baselines.
+* **Programming languages**: Python, R, SQL, NoSQL, Bash (Linux),  C++, Java, HTML, CSS, Javascript.
+* **Framework: TensorFlow**, Keras, Flask, LTP, gensim, r-Shiny, r-dplyr, Bootstrap4, D3.js, PySpark.
+* **Tools/Libraries**: Scikit-learn, requests, BeautifulSoup, Git, MySQL, PostgreSQL, MongoDB,
+				AWS (EC2, S3, RDS, Redshift)
 
 ---
 
-##### 2>- CNN-LSTM Sentence Classification on Movie Reviews/Article Topics
-    key words: Tensorflow, LSTM, TextCNN, GloVe
-
-* Cleaned/Preprocessed text data and mapped words embeddings according to pre-trained GLoVe vectors. Built and trained model in Tensorflow.}
- 
-* Applied CNN to extract spatial-dependency features, on the top of which a stack of LSTMs were applied to fit temporal dependency among features.}
+#### Contacts:
+  * My Github: http://github.com/CH-YYK
+  * My Resume: https://drive.google.com/file/d/1-mTrISxa-jkKTU7TYLOgTL1-FsN_3A5D/view?usp=sharing
 
 ---
 
-##### 3>- Network Embedding for Large Youtube Network Using DeepWalk 
-    key words: Tensorflow, GNN, DeepWalk
+#### Brief Summary
+A passionate R User, Python enthusiast, and NLPer.
 
-* Cleaned and sampled the Youtube network nodes and construct power-law test.
+Solid Hands-on experience in Python/R/SQL with familarity in open-source framework including TensorFlow, Scikit-learn, pandas, numpy, dplyr, ggplot2. 
 
-* Built undirected network and extracted random walk sequences from each vertices.
+Familiar with basic machine learning techniques such as SVM, logistic regression, XGBoost, GBDT, Random Forest and deep learning methods including CNN, LSTM, GRU, Attention, Transformer.
 
-* Encoded vertices into dense representations from sequences using Skip-gram model by analogy to language model.
+---
 
-## Others
+#### Sample Projects
+More experience can be found on my resume and my github.
+
+* R-shiny roadmap:
+
+Assemble Google map API and weather API along with the Shiny in R
+<iframe src="https://ch-yykzhuifengmu.shinyapps.io/Shiny_Map/" style="left: -100; width: 800px; height: 600px"></iframe>
+
+* Social media speech Extractor
+

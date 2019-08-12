@@ -1,0 +1,149 @@
+---
+title: 'Paper-summary-2: XGBoost- A Scalable Tree Boosting System'
+author: "Yikang"
+date: '2019-08-11'
+tags: ['Math']
+categories: ['Machine Learning']
+---
+
+
+## Introduction
+XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+
+## Goal of the paper
+> Describe a scalable end-to-end tree boosting system called **XGBoost**, which is used widely by data scientist to achieve SOTA results.
+
+这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对*稀疏*数据的处理方法以及对*连续特征*的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+
+## Major contribution from this paper
+
+1. 提出一个highly scalable的端对端提升树系统。
+2. 提出加权版的quantile sketch用来处理连续数据分段。
+3. 提出适合稀疏数据的并行学习算法。
+4. 提出一种高效的缓存结构用来辅助out-of-core learning.
+
+## Pre-defined Notations
+在正文之前，先来统一一下数学符号以及一些关键性的概念。
+
+- $\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})$ ： 样本数为$n$的数据集，其中feature的个数为$m$。
+- $\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}$ : 第k个feature里的值及对应的二阶导数。
+
+- $K$ : boosting过程中子模型个数。
+
+- $\mathcal{F} = \{f(\mathbf{x}) = w_{q(\mathbf{x})}\} (q:\mathbb{R}^m \rightarrow T,w\in \mathbb{R}^T)$ : $\mathcal{F}$为所有回归树的空间，$q$表示树的一个结构。
+- $||\mathbf{x}||_0$ : $\mathbf{x}$中有效元素的个数。
+- $l$ : 二阶可导的单样本损失函数。
+- $\mathcal{L}$ : 整个模型的损失函数。
+- $\mathcal{L}^{(t)}$ : 在第$t$步模型损失函数。
+- $\phi (\mathbf{x}_i) = \sum_{k=1}^K f_k(\mathbf{x}_i), f_k \in \mathcal{F}$  :  $\phi$代表最终模型的输出，$f_k$指构成模型的一系列子模型。
+- $g_i$ : loss function 对$y_i^{(t-1)}$的一阶导数。
+- $h_i$ : loss function 对$y_i^{(t-1)}$的二阶导数。
+- $r_k(z) = \frac{1}{\sum_{(x,h)\in \mathcal{D}_k}h}\sum_{(x,h)\in \mathcal{D}_k}h\mathbb{I}(x<z)$ : rank function，feature k中小于z的样本点占的比重。
+- $s_{kj}$ : （quantile）分割点，其中$s_{k1}=min_i \mathbf{x}_{ik}$，$s_{kl}=max_i\mathbf{x}_{ik}$。
+  
+## Methodology Part-1: Gradient Boosting
+
+### (a) Regularized Learning objective
+模型的损失函数为所有单个样本的损失和。相对与GBDT，XGBoost加入了一个正则项，用来控制树的深度和参数的数值来做到防过拟合。当正则项系数设为0的时候，XGBoost和GBDT在优化方向方面是一致的。加入正则化后，模型的损失函数变成了
+$$\mathcal{L}(\phi) = \sum_i l(\hat{y_i}, y_i) + \sum_k \Omega(f_k)$$ $$\Omega(f) = \gamma T + \frac{1}{2}\lambda ||w||^2$$
+
+### (b) Gradient Tree Boosting
+XGBoost本质还是一个梯度提升树，所以训练loss的时候跟GBDT有很大一部分是相似的。例如同为加法模型，在每一步迭代（假设当前为$t$步），我们需要找到一个$f_t$，来使得当前loss最小
+$$\mathcal{L}^{(t)} = \sum_i l(\hat{y_i}, y_i^{(t-1)} + f_t(\mathbf{x}_i)) + \Omega(f_t)$$ 
+但是在加速收敛方面，GBDT采用的是first-order approximation，对loss做了关于$y_i^{(t-1)}$的一阶泰勒展开，而XGBoost采用的是second-order approximation，对loss做了二阶泰勒展开。列在一起对比如下（当然GBDT是没有regularized部分的）
+
+$$
+\mathcal{L}^{(t)} \approxeq \sum_{i=1}^nl(y_i, \hat{y_i}^{(t-1)}) + g_if_t(\mathbf{x}_i) + \Omega(f_t)
+$$$$
+\mathcal{L}^{(t)} \approxeq \sum_{i=1}^nl(y_i, \hat{y_i}^{(t-1)}) + g_if_t(\mathbf{x}_i) + \frac{1}{2}h_if_t^2(\mathbf{x}_i) + \Omega(f_t)
+$$
+在针对$f_t(x)$ 进行优化的时候，两个式子的首项都与$f_t$无关，所以我们都可以提前将他们删掉。因此GBDT最后的优化目标即为每一步残差的一阶导数，而XGBoost则同时拥有一阶及二阶导数。两者在最终结果上应该是一致的，但是不同approximation方式使得XGBoost的收敛速度变得快了几分。两者的算法对比可以参考梯度下降法和牛顿法的对比。
+
+最后将$\Omega(f_t)$代入式子，并去掉首项的常数项，我们最后获得一个关于$f_t$的函数，并把$f_t(\mathbf{x}_i) = w_{q(\mathbf{x})}$也代入，依照树模型的原理，每一个$\mathbf{x}_i$会被分到一个区间内，对应的模型输出为$w_j$。描述的比较抽象但是写出来还是蛮清晰的。
+$$\begin{array}{ll}
+\bar{\mathcal{L}}^{(t)}=&\sum_{i=1}^n[g_if_t(\mathbf{x}_i) + \frac{1}{2}h_if_t^2(\mathbf{x}_i)] + \gamma T + \frac{1}{2}\lambda \sum_{j=1}^T w_j^2\\
+\bar{\mathcal{L}}^{(t)}=&\sum_{j=1}^T[(\sum_{i\in I_j}g_i)w_j+\frac{1}{2}(\sum_{i\in I_j}h_i + \lambda)w_j^2] + \gamma T
+\end{array}$$
+$w_j$就是我们要获得的用来定义$f_t$的模型参数，所以现在既然已有了函数，我们可以直接对$w_j$求导来得到关于$w_j$的极值点。
+$$
+w_j^* = -\frac{\sum_{i \in I_j}g_i}{\sum_{i\in I_j}h_i + \lambda}
+$$
+代入上式我们即获得
+$$
+\bar{\mathcal{L}}^{(t)}=-\frac{1}{2}\sum_{j=1}^T\frac{(\sum_{i\in I_j}g_i)^2}{\sum_{i\in I_j}h_i+\lambda} + \gamma T
+$$
+以上，我们获得了一个新的loss function，而这个function除了$T$以外，只与一阶导数和二阶导数有关。而作为树模型，同样也有一个类似于信息增益那样基于loss reduction的分割子数的评价标准。假设当前feature被分为$I_L$和$I_R$而且有$I_j = I_L \cup I_R$，那么对应的loss reduction即为
+$$
+\mathcal{L}_{split} = \frac{1}{2}[\frac{(\sum_{i\in I_L}g_i)^2}{\sum_{i\in I_L}h_i+\lambda} + \frac{(\sum_{i\in I_R}g_i)^2}{\sum_{i\in I_R}h_i+\lambda}-\frac{(\sum_{i\in I_j}g_i)^2}{\sum_{i\in I_j}h_i+\lambda}]
+$$
+该式子在形式还是挺直观，在本质上与信息增益等传统方法工作原理是一样的。分割用的特征以及分割点需要使loss reduction最大。
+
+###  (cc) Techniques to Avoid over-fitting
+为了解决过拟合，除了正则化项，XGBoost同时还加入了两种“传统”办法，所谓传统就是之前模型中出现的方法。
+例如：
+
+1. Shringkage: 出自GBDT，简单原理就是在boosting过程中，当准备加入一棵新树的来更新模型残差的时候，工作原理类似梯度下降法中的step size。
+2. Column（feature） Subsampling： 出自random forest，指的是在基于某个feature进行树分割的时候，只对一部分feature值进行遍历。因为遍历的点少了，所以这个方法同时还能加速计算。
+
+## Methodology Part-2: Split Finding Algorithm
+### (a.) Exact Greedy Algorithm
+构建树模型的时候最重要的仍旧是分割点的搜寻问题。最直接的办法还是Exact Greedy Search，也就是在要分割的时候测试每一个feature的每一个样本点，选择loss reduction最大的那个feature及相应的样本点作为分割点。paper中提供了一个XGBoost版的：
+<!--[外链图片转存失败(img-civtBjL5-1564135306008)(images/exact_greedy_algo.png)]-->
+![image1](/post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system.en_files/tmp1.png){width=60% height=60%}
+这个算法是要求我们算出每个feature的在每个点分割后，产生的loss reduction，在这里预先对feature里的值进行排序使这个搜索过程变成y一个动态规划的过程。降低了求loss reduction的成本。虽然排序的过程很耗时间，但XGBoost的一个系统层面上的优化点，就是预先对所有的feature进行了排序并存储。
+
+### (b.) Approximate Algorithm
+与上面提到的Exact greedy算法不同，为了高效处理数据我们很多时候不太可能对所有feature所有点进行遍历。Approximate Algorithm就是为了在不影响整体结果的情况下，适当地对feature进行重组，分成好多个bucket，每个bucket里输出一个可以代表整个bucket的整合后的值。这样我们在进行搜索的时候，只需要测试这几个bucket的值就可以了。对应的XGBoost版本为：
+
+<!--[外链图片转存失败(img-8NLtrtgM-1564135306012)(images/approximately_algo.png)]-->
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180539342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70)
+请注意算法中提到的了**global**和**local**，这里指的是分桶的时候的两种变体。
+
+- Global： 每个feature分好bucket后，在接下来每次split finding的时候，都用这次分好的bucket。
+- Local： 每次split finding的时候，额外分一次bucket。
+
+### (c.) Weighted Quantile Sketch
+分桶的过程还是挺讲究的。分桶时候还是要保证不会对模型的质量产生影响的，所以要确保各个桶里的样本点产生的loss是接近的，这样在分割后不会出现左子树和右子树loss不平衡。当各个样本点产生的loss的权重相等时，可以用一个叫quantile sketch的方法来分桶。但是在paper中，作者提出了一个改进方法，首先将XGBoost的loss function重写成了weighted loss的形式
+$$
+\sum_{i=1}^n\frac{1}{2} h_i(f_t(\textbf{x}_i)-\frac{g_i}{h_i})^2+\Omega(f_t) + constant
+$$
+可以看出$h_i$在这里扮演了个类似权重的作用。可以理解为每个样本点产生的对bucket产生的loss不是等价的。为了配合这种表达，作者顺便提出了一个weighted quantile sketch算法来解决这个问题。由于这部分内容并没有在paper中说明，有需要可以参考作者批注的[supplementary material](http://homes.cs.washington.edu/tqchen/pdf/xgboost-supp.pdf)。
+
+另外，作者还是提供了明确的数学定义来描述算法的目的。假设手上有$\mathcal{D}_k$，以及阈值$\epsilon$，算法的目的为找到一组quantile的分割点，$\{s_{k1},s_{k2},s_{k3},...s_{kl}\}$使
+$$|r_k(s_{k,j})-r_k(s_{k,j+1})| < \epsilon$$ 
+可以估计，大约有$1/\epsilon$个分割点。参照前面列出来的$r_k$的定义，权重是由$h_i$来构定义的，分母是一个normalization项从而使$r_k$的输出为一个分数。
+
+### (d.) Sparsity-aware split finding.
+这部分主要是讲解如何处理缺失值的，我认为非常有借鉴意义。虽然名字里带着sparsity（稀疏），但是产生的原因主要也是因为存在缺失点。作者在这里的处理方式很巧妙，大致可以归纳为：
+
+- 只处理非缺失的部分。
+- 假设missing data会被分到右边，并得出最优的模型以及score。
+- 假设missing data会被分到左边，并得出最优的模型以及score。
+- 比较两个score，得z最优模型及最佳missing value的默认方向。
+
+算法截图为
+<!--[外链图片转存失败(img-fY9vkeYQ-1564135306013)(images/sparsity-aware-algo.png)]-->
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180606147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70)
+## System Design
+这部分讲的全是系统层面上的优化，主要包括XGBoost在分布式下的并行实现。同时也是我读的最吃力的地方。由于非计算机科班我就不对这些描述太多了。主要贡献包括
+- block structure: 预存各个特征的排序结j及相应index来优化split finding
+- cache-aware access: 来达到高速访问缓存，来实现依照index快速调取gradient的目的。
+
+### Time complexity analysis
+如题：
+假设一共需要K个子模型，每个模型由一个深度为d的树构成。那么paper中列举的算法复杂度为.
+
+1. Exact Greedy Algorithm, $O(Kd||\mathbf{x}||_0logn)$
+   * $Kd$次split finding。
+   * $||x||_0$个有效元素需要被排序。
+   * 被排序元素大概需要遍历$logn$步
+2. Tree boosting + block structure, $O(Kd||\mathbf{x}||_0 + ||\mathbf{x}||_0logn)$
+   * $Kd$次split finding，以及每次$||\mathbf{x}||_0$次遍历。
+   * 对$\mathbf{x}$进行一次排序，$||\mathbf{x}||_0logn$。
+3. Approximate Algorithm， 假设q个quantile，$O(Kd||\mathbf{x}||_0logq)$
+   * 由于这次其实只有$q$值元素在被排序，所以替换为$logq$，其余与exact greedy 保持一致。
+4. Approximate Algorithm using block structure，假设每个Block中有$B$行，$O(Kd||\mathbf{x}||_0 + ||\mathbf{x}||_0logB)$
+   * 每个block中只有$B$个元素被排序，所以为$logB$，其余与2保持一致。
+
+## Conclusion.
+作者同时从数学及计算机的角度对Boosting tree的方法进行了优化，整个paper的信息量还是挺大的，尤其是system design的部分对操作系统方面也是有要求的。本质上XGBoost还是一个gradient boosting tree，在后面的算法对比中XGBoost也在不同任务里，与GBDT达到了同等高度的模型准确度，但是在这么多优化方法下，时间效率上以及资源利用率上提升了非常多。

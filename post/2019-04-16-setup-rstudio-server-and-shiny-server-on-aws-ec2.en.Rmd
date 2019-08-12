@@ -1,0 +1,22 @@
+---
+title: Setup Rstudio Server and Shiny Server on AWS EC2
+author: Yikang
+date: '2019-04-16'
+slug: setup-rstudio-server-and-shiny-server-on-aws-ec2
+categories: ['Data Science'] 
+type: ''
+subtitle: ''
+image: ''
+---
+
+In people's traditional views, R always comes along with analysis and statistics. As R users, we all knew that R is not only a local software limited to analysis toolkit but has some powerful features to do fancy things. Thanks to Rstudio team who helped develop fundaments for R community, like Rstudio server for group project and shiny server for hosting shiny apps. Here are some experiences or traps I have encountered in setting these two servers on EC2.
+
+## Overall steps
+
+## Shiny server
+libcurl4-openssl-dev
+libssl-dev
+
+version control;
+  * httpuv: 1.3.5
+  * shiny: 1.0.5

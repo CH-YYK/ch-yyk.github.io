@@ -7,10 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>yikang.yang95@gmail.com (Yikang Yang)</managingEditor>
     <webMaster>yikang.yang95@gmail.com (Yikang Yang)</webMaster>
-    <lastBuildDate>Mon, 04 Mar 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 11 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/math/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Paper-summary-2: XGBoost- A Scalable Tree Boosting System</title>
+      <link>/post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system/</link>
+      <pubDate>Sun, 11 Aug 2019 00:00:00 +0000</pubDate>
+      <author>yikang.yang95@gmail.com (Yikang Yang)</author>
+      <guid>/post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system/</guid>
+      <description>Introduction XGBoost对大部分人而言应该是不陌生的，在kaggle等数据科学竞赛的平台上凭借其准确快速的特性吸引了一大批拥趸。这次花了几天时间自己读了一下该论文，作者的基于GBDT的算法改进以及计算机系统设计层面的优化非常有创新性。不仅如此，作者在paper中将复杂度分析以及伪代码的部分也写的非常的详细。总的来说这是一篇很有价值的paper，适合精读一次。
+ Goal of the paper  Describe a scalable end-to-end tree boosting system called XGBoost, which is used widely by data scientist to achieve SOTA results.
+ 这是paper中的原话，而关键也在于这个system。相较于别的提升树模型，XGboost的一个主要优势也是对不同问题的高度兼容性以及稳定性。稳定主要体现在算法层面及系统层面。算法层面优化针对稀疏数据的处理方法以及对连续特征的分组方法。而系统层面提出了一种缓存管理的方法用来降低资源损耗。二者结合后使得XGBoost用相对当时现有的系统更少的计算资源在亿级数据层面获得不错效果。
+ Major contribution from this paper 提出一个highly scalable的端对端提升树系统。 提出加权版的quantile sketch用来处理连续数据分段。 提出适合稀疏数据的并行学习算法。 提出一种高效的缓存结构用来辅助out-of-core learning.   Pre-defined Notations 在正文之前，先来统一一下数学符号以及一些关键性的概念。
+ \(\mathcal{D} = \{(x_i, y_i)\} (|\mathcal{D}| = n,x_i \in\mathbb{R}^m, y_i\in \mathbb{R})\) ： 样本数为\(n\)的数据集，其中feature的个数为\(m\)。 \(\mathcal{D}_k = \{(x_{1k}, h_{1}),(x_{2k}, h_{2}),...,(x_{nk}, h_{n})\}\) : 第k个feature里的值及对应的二阶导数。</description>
+    </item>
     
     <item>
       <title>[C&#43;&#43;] My process in building ML from scratch</title>

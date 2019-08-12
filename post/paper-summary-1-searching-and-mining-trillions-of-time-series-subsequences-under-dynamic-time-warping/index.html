@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping - Hello World</title>
+  <meta property="og:title" content="Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping" />
+  <meta name="twitter:title" content="Paper-summary-1: Searching and Mining Trillions of Time Series …" />
+  <meta name="description" content="ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i&#43;1}, ..., t_{i&#43;k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。">
+  <meta property="og:description" content="ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i&#43;1}, ..., t_{i&#43;k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。">
+  <meta name="twitter:description" content="ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全 …">
+  <meta name="author" content="Yikang Yang"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Hello World",
+    
+    "url": "/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "/post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/",
+          "name": "Paper summary 1 searching and mining trillions of time series subsequences under dynamic time warping"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Yikang"
+  },
+  "headline": "Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping",
+  "description" : "ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i&#43;1}, ..., t_{i&#43;k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。",
+  "inLanguage" : "en",
+  "wordCount": 222,
+  "datePublished" : "2019-08-11T00:00:00",
+  "dateModified" : "2019-08-11T00:00:00",
+  "image" : "/img/cat.jpeg",
+  "keywords" : [ "Dynamic Programming" ],
+  "mainEntityOfPage" : "/post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "/img/cat.jpeg",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping" />
+<meta property="og:description" content="ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。
+How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
+Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i&#43;1}, ..., t_{i&#43;k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。">
+<meta property="og:image" content="/img/cat.jpeg" />
+<meta property="og:url" content="/post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Hello World" />
+  <meta name="twitter:title" content="Paper-summary-1: Searching and Mining Trillions of Time Series …" />
+  <meta name="twitter:description" content="ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
+ 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全 …">
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <link href='../../img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/cat.jpeg" />
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hello World" />
+
+  <meta name="generator" content="Hugo 0.52" />
+  <link rel="alternate" href="../../index.xml" type="application/rss+xml" title="Hello World">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="../../css/highlight.min.css" /><link rel="stylesheet" href="../../css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../../">Hello World</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="main" href="../../home">main</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="../../page/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Blog" href="../../post/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="../../tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Categories" href="../../categories">Categories</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Hello World" href="../../">
+            <img class="avatar-img" src="../../img/cat.jpeg" alt="Hello World" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on August 11, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;222&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+
+<blockquote>
+<p>ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping</p>
+</blockquote>
+<p>首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。 在这里DTW的全称是“Dynamic Time Warping”，本身是一个衡量两个序列相似程度的算法，而且在众多相关文章的验证下，可以说是针对时间序列问题的最好算法之一，但同时它也存在着同类算法的共同瓶颈问题，时间复杂度较高而无法适用于“大”数据。而这也是本篇paper旨在解决的。</p>
+<div id="how-does-dtw-dynamic-time-warping-work" class="section level2">
+<h2>How does DTW (Dynamic Time Warping) work</h2>
+<p><strong>Explaination:</strong>假设已知两个序列<span class="math inline">\(X\)</span>和<span class="math inline">\(Y\)</span>，长度分别为<span class="math inline">\(M\)</span>和<span class="math inline">\(N\)</span>。当<span class="math inline">\(M=N\)</span>的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 <span class="math inline">\(M×N\)</span> 对点，也就是<span class="math inline">\(M×N\)</span>个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 <span class="math inline">\(Cost \in R^{M\times N}\)</span>，在这里元素<span class="math inline">\(Cost_{i,j}\)</span> 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为<span class="math inline">\(cost\)</span>），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于<span class="math inline">\(（0,0）\)</span>终于<span class="math inline">\(（M-1，N-1）\)</span>而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。</p>
+<div id="definitions-and-notations" class="section level4">
+<h4>Definitions and Notations</h4>
+<ul>
+<li><strong>Definition-1:</strong> 定义有序序列 <span class="math inline">\(T = t_1, t_2, ..., t_m\)</span>。由于<span class="math inline">\(T\)</span>很长，所以我们会用它的子序列来作比较。</li>
+<li><strong>Definition-2:</strong> 定义序列 <span class="math inline">\(T_{i,k} = t_i, t_{i+1}, ..., t_{i+k-1}\)</span>为长度为<span class="math inline">\(k\)</span>，起始于<span class="math inline">\(t_i\)</span>的<span class="math inline">\(T\)</span>的子序列。</li>
+<li><strong>Definition-3:</strong> 假设有序列<span class="math inline">\(Q\)</span>和<span class="math inline">\(C\)</span>，当<span class="math inline">\(|Q|=|C|\)</span>时，定义<span class="math inline">\(Q\)</span>和<span class="math inline">\(C\)</span>之间的Euclidean distance (ED) 为： <span class="math display">\[
+ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
+\]</span></li>
+</ul>
+<p>为避免产生歧义，用<span class="math inline">\(C\)</span>来表示<span class="math inline">\(T_{i,k}\)</span>作为用来比较的子序列，用<span class="math inline">\(Q\)</span>来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。</p>
+<!-- [外链图片转存失败(img-DiTn7EWl-1563226828525)(./images/image-1.png)]-->
+<p>如图所示的红线便是需要找到的“目标路径”，它有一个专有的名词叫warping path。而、依照不同场景的要求，可以对search的区间设置上下界，例如：<span class="math inline">\(Q_i\)</span> 最多只与<span class="math inline">\(C_{i-w}\)</span>到<span class="math inline">\(C_{i+w}\)</span>这系列点进行配对。这时候相当于搜索在连续地用X与Y的subsequences来进行比较（绿线的作用）。</p>
+</div>
+</div>
+<div id="known-ways-to-compute-dtw" class="section level2">
+<h2>Known ways to compute DTW</h2>
+<p>首先paper列举了为计算DTW或ED已知并且常用的几种优化方法：</p>
+<ol style="list-style-type: decimal">
+<li>使用平方形式的距离度量。 &gt; Euclidean和DTW在之前一直用的是平方根，开根号的话还是多了一步操作，而平方形式与平方根形式有相同的单调性，而且都是凸函数，只要数值不爆掉（normalized 之后应该不会），用平方根是足够了。</li>
+<li>使用Lower Bounding。 &gt; 以DTW为例，计算的时间复杂度大概为 <span class="math inline">\(O(MN)\)</span>，M和N分别为两个序列长度。但如果我们不要求一个精确的结果时，可以用一些更容易计算的结果来approximately代替DTW，例如LB_KimFL计算的是第一个（最后一个）数据对的距离，这时候时间复杂度为O(1).</li>
+<li>使用Early abandoning。 &gt; Early abandoning 依照字面意思就是我们提前停止计算DTW。假设我们有一个心理预期的<span class="math inline">\(cost = b\)</span>，由于搜索计算DTW的时候cost是个递增过程，如果当前cost已经高于预期的<span class="math inline">\(b\)</span>的时候，再做复杂的搜索已经没有意义了。所以后半段可以直接用lower bound来替代。</li>
+</ol>
+<p>在这些之前还有一个隐含的假设条件，那就是要被比较的序列应被提前（高斯）标准化（Z-normalized），而且若在计算DTW的过程中涉及到比较subsequence的时候，该subsequence也需要各自标准化（不能用全局<span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\sigma\)</span> 来标准化）。这种高效处理连续子数列的方法一般都可以用贪婪算法或者sliding window来搞定，这些同样也在paper里被提了出来。</p>
+</div>
+<div id="innovative-optimization-methods-provided-from-paper" class="section level2">
+<h2>Innovative optimization methods provided from paper</h2>
+<p>作者创新的优化方法 （UCR suite）</p>
+<ol style="list-style-type: decimal">
+<li>Early abandoning Z-normalization</li>
+<li>Reordering Early Abandoning</li>
+<li>Reversing the Query/Data Role in LB_Keogh</li>
+<li>Cascading Lower Bounds.</li>
+</ol>
+<p>现在一个一个来</p>
+<div id="early-abandoning-z-normalization" class="section level4">
+<h4>1. Early abandoning Z-normalization</h4>
+<p>依照作者在隐藏假设条件，涉及到算距离的时候需要对子序列分别进行Z-normalization，这部分可能比算加入early abandoning的Euclidean distance计算复杂度更高。作者还在paper里感慨，“之前一直没有人做这方面的优化”。此处作者的优化点在于在算<em>Euclidean Distance</em>或者<em><span class="math inline">\(LB_{Keogh}\)</span></em>时候嵌入了early abandoning。</p>
+<p>算法伪代码如下图。</p>
+<!-- [外链图片转存失败(img-Ml6KLYqb-1563226828526)(./images/algo-1.png)] -->
+<p>在line 10的条件里加入了与best-so-far的比较，若超过则停下。最后下来的结果是我们从C中找到了一个subsequence与Q距离最短。</p>
+</div>
+<div id="reordering-early-abandoning" class="section level4">
+<h4>2. Reordering Early Abandoning</h4>
+<p>这一条其实还是离不开early abandoning的范畴，以ED为例，如果已经有一个best-so-far的距离的话 （假设为<span class="math inline">\(b\)</span>），我们只需要知道<span class="math inline">\(C\)</span>中存在一部分点，而且这部分点与<span class="math inline">\(Q\)</span>中对应点的之间的距离已经超过了<span class="math inline">\(b\)</span>的话，我们就没有必要再测别的了。 <!-- [外链图片转存失败(img-QaHEEw2X-1563226828527)(./images/image-2.png)] --></p>
+<p>所以作者提出，我们从<em>最大的距离</em>开始加而不是从<em>第一个</em>点开始算，这样也许只需要算很少的一部分点就可以让程序终止了。也是一个不错的pruning off的方法。</p>
+</div>
+<div id="reversing-the-querydata-role-in-lb_keogh" class="section level4">
+<h4>3. Reversing the Query/Data Role in LB_{Keogh}</h4>
+<p>一切为了pruning！！平常用来算<span class="math inline">\(LB_{Keogh}\)</span>时候是找围绕着<span class="math inline">\(Q\)</span>的<span class="math inline">\(\{U,L\}\)</span>，毕竟query一般比较短嘛，这样只需要算一次就好，省时省力，暂时用<span class="math inline">\(LB_{Keogh}EQ\)</span>来表示。不过如果当<span class="math inline">\(LB_{Keogh}EQ\)</span>无法做到快ppruning的话，就需要一些alternative了。作者在这里提议，偶尔可以算一下围绕着<span class="math inline">\(C\)</span>的<span class="math inline">\(\{U,L\}\)</span>的<span class="math inline">\(LB_{Keogh}\)</span>，记为<span class="math inline">\(LB_{Keogh}EC\)</span>。只有当pruning效果更好的时候才会这样替换，这样即使花“时间精力”重新算，pruning掉的时间也值得了，（可惜在这里没有看到更多的细节）。</p>
+</div>
+<div id="cascading-lower-bounds." class="section level4">
+<h4>4.Cascading Lower Bounds.</h4>
+<p>Lower Bounds算法有好多种，而且与最后要的DTW相似程度与算法复杂度是成正比的，也就是Lower Bound越复杂最后结果就越精确（以算DTW为目标）。paper里有个线图很直接。 <!-- [外链图片转存失败(img-7LKTjZS1-1563226828528)(./images/image-3.png)]--></p>
+<p>当然lower bound不仅仅是图上有的这些，但在选lower bound的时候倾向于选择跟DTW更近，而且复杂度尽量低。图上的虚线相当于一个临界，一个好的lower bound至少要落在这条虚线上。</p>
+<p>当需要决定用哪个的时候，作者提出：所有都用，一个一个来，先从最弱的开始。算法设计合理的话这几个Lower bound基本上都可以同时在一次迭代中计算出来，如果其中任意Lower-bound超过了best-so-far，就可以直接停下。因此理论上可以将复杂度控制在<span class="math inline">\(O(1)\)</span>和<span class="math inline">\(O(n)\)</span>之间。最后若这些Bounds都未能超过best-so-far，那就可以开始算DTW with early abandoning。</p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>因为专业不算计算机科班，里面还有很多概念不是很懂，尤其是涉及到算法复杂度这里。但总的来说，整篇paper给我的感觉就像是在牺牲精度换取时间。不过paper里还有写，若是那种对精度要求高的数据集，等还是得等的。根据作者的实验结果，paper中的优化策略在时间上的优化程度还是相当明显的，而且作者也测试了好多数据集。我个人比较遗憾的点在于，作者的优化方向集中在算Euclidean distance或Lower bound上，倒是没有特别多着重在DTW上。</p>
+</div>
+<div id="reference" class="section level2">
+<h2>Reference:</h2>
+<p>Rakthanmanon, T., Campana, B., Mueen, A., Batista, G., Westover, B., Zhu, Q., Zakaria, J. and Keogh, E., 2012, August. <a href="https://www.researchgate.net/profile/Thanawin_Rakthanmanon/publication/241770605_Searching_and_mining_trillions_of_time_series_subsequences_under_dynamic_time_warping/links/02e7e532bb3c110fae000000/Searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping.pdf">Searching and mining trillions of time series subsequences under dynamic time warping</a>. In Proceedings of the 18th ACM SIGKDD international conference on Knowledge discovery and data mining (pp. 262-270). ACM.</p>
+</div>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="//tags/dynamic-programming/">Dynamic Programming</a>&nbsp;
+            
+          </div>
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f&amp;text=Paper-summary-1%3a%20Searching%20and%20Mining%20Trillions%20of%20Time%20Series%20Subsequences%20under%20Dynamic%20Time%20Warping&amp;via=" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f" target="_blank" title="Share on Google Plus">
+          <i class="fab fa-google-plus"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f&amp;title=Paper-summary-1%3a%20Searching%20and%20Mining%20Trillions%20of%20Time%20Series%20Subsequences%20under%20Dynamic%20Time%20Warping" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f&amp;title=Paper-summary-1%3a%20Searching%20and%20Mining%20Trillions%20of%20Time%20Series%20Subsequences%20under%20Dynamic%20Time%20Warping" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f&amp;title=Paper-summary-1%3a%20Searching%20and%20Mining%20Trillions%20of%20Time%20Series%20Subsequences%20under%20Dynamic%20Time%20Warping" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2fpaper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping%2f&amp;description=Paper-summary-1%3a%20Searching%20and%20Mining%20Trillions%20of%20Time%20Series%20Subsequences%20under%20Dynamic%20Time%20Warping" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+              </div>
+            </section>
+        
+
+        
+          
+          
+          <h4 class="see-also">See also</h4>
+          <ul>
+          
+            <li><a href="../../post/2018-12-23-largest-sqaure-of-1-from-matrix/">Largest Square of 1’s from A Matrix</a></li>
+          
+          </ul>
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="../../post/2019-08-11-paper-summary-2-xgboost-a-scalable-tree-boosting-system/" data-toggle="tooltip" data-placement="top" title="Paper-summary-2: XGBoost- A Scalable Tree Boosting System">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:yikang.yang95@gmail.com" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/Yikang%20Yang" title="Facebook">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/CH-YYK" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/yikang-yang-158162155" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="../../index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="yourwebsite.com">Yikang Yang</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2019
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="../../">Hello World</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.52</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="../../js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
+

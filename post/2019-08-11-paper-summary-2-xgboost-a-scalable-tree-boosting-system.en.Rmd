@@ -78,7 +78,7 @@ $$
 $$
 该式子在形式还是挺直观，在本质上与信息增益等传统方法工作原理是一样的。分割用的特征以及分割点需要使loss reduction最大。
 
-###  (cc) Techniques to Avoid over-fitting
+###  (c) Techniques to Avoid over-fitting
 为了解决过拟合，除了正则化项，XGBoost同时还加入了两种“传统”办法，所谓传统就是之前模型中出现的方法。
 例如：
 
@@ -96,7 +96,7 @@ $$
 与上面提到的Exact greedy算法不同，为了高效处理数据我们很多时候不太可能对所有feature所有点进行遍历。Approximate Algorithm就是为了在不影响整体结果的情况下，适当地对feature进行重组，分成好多个bucket，每个bucket里输出一个可以代表整个bucket的整合后的值。这样我们在进行搜索的时候，只需要测试这几个bucket的值就可以了。对应的XGBoost版本为：
 
 <!--[外链图片转存失败(img-8NLtrtgM-1564135306012)(images/approximately_algo.png)]-->
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180539342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180539342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=80% height=80%}
 请注意算法中提到的了**global**和**local**，这里指的是分桶的时候的两种变体。
 
 - Global： 每个feature分好bucket后，在接下来每次split finding的时候，都用这次分好的bucket。
@@ -123,7 +123,7 @@ $$|r_k(s_{k,j})-r_k(s_{k,j+1})| < \epsilon$$
 
 算法截图为
 <!--[外链图片转存失败(img-fY9vkeYQ-1564135306013)(images/sparsity-aware-algo.png)]-->
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180606147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190726180606147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=80% height=80%}
 ## System Design
 这部分讲的全是系统层面上的优化，主要包括XGBoost在分布式下的并行实现。同时也是我读的最吃力的地方。由于非计算机科班我就不对这些描述太多了。主要贡献包括
 - block structure: 预存各个特征的排序结j及相应index来优化split finding

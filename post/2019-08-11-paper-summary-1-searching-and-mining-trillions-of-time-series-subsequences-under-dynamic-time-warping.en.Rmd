@@ -7,7 +7,6 @@ slug: paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences
 tags: ["Dynamic Programming"]
 categories: ["Data Science","Machine Learning"]
 ---
-
 > ref: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping
 
 首先整篇文章主要讲的是一系列针对 DTW 算法的时间优化策略，还包括与一部分主流的同类算法的效果对比，而且根据paper中所列的结果来看，这些优化策略在时间上确实表现出来了明显的提升，非常值得借鉴。
@@ -29,6 +28,7 @@ $$
 为避免产生歧义，用$C$来表示$T_{i,k}$作为用来比较的子序列，用$Q$来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。
 
 <!-- [外链图片转存失败(img-DiTn7EWl-1563226828525)(./images/image-1.png)]-->
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190716055650754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=70% height=70%}
 
 如图所示的红线便是需要找到的“目标路径”，它有一个专有的名词叫warping path。而、依照不同场景的要求，可以对search的区间设置上下界，例如：$Q_i$ 最多只与$C_{i-w}$到$C_{i+w}$这系列点进行配对。这时候相当于搜索在连续地用X与Y的subsequences来进行比较（绿线的作用）。
 
@@ -61,6 +61,7 @@ $$
 算法伪代码如下图。
 
 <!-- [外链图片转存失败(img-Ml6KLYqb-1563226828526)(./images/algo-1.png)] -->
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190716060136818.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=80% height=80%}
 
 在line 10的条件里加入了与best-so-far的比较，若超过则停下。最后下来的结果是我们从C中找到了一个subsequence与Q距离最短。
 
@@ -68,6 +69,7 @@ $$
 
 这一条其实还是离不开early abandoning的范畴，以ED为例，如果已经有一个best-so-far的距离的话 （假设为$b$），我们只需要知道$C$中存在一部分点，而且这部分点与$Q$中对应点的之间的距离已经超过了$b$的话，我们就没有必要再测别的了。
 <!-- [外链图片转存失败(img-QaHEEw2X-1563226828527)(./images/image-2.png)] -->
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190716055728666.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=80% height=80%}
 
 所以作者提出，我们从*最大的距离*开始加而不是从*第一个*点开始算，这样也许只需要算很少的一部分点就可以让程序终止了。也是一个不错的pruning off的方法。
 
@@ -78,7 +80,7 @@ $$
 #### 4.Cascading Lower Bounds.
 Lower Bounds算法有好多种，而且与最后要的DTW相似程度与算法复杂度是成正比的，也就是Lower Bound越复杂最后结果就越精确（以算DTW为目标）。paper里有个线图很直接。
 <!-- [外链图片转存失败(img-7LKTjZS1-1563226828528)(./images/image-3.png)]-->
-
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190716055834428.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70){width=80% height=80%}
 当然lower bound不仅仅是图上有的这些，但在选lower bound的时候倾向于选择跟DTW更近，而且复杂度尽量低。图上的虚线相当于一个临界，一个好的lower bound至少要落在这条虚线上。
 
 当需要决定用哪个的时候，作者提出：所有都用，一个一个来，先从最弱的开始。算法设计合理的话这几个Lower bound基本上都可以同时在一次迭代中计算出来，如果其中任意Lower-bound超过了best-so-far，就可以直接停下。因此理论上可以将复杂度控制在$O(1)$和$O(n)$之间。最后若这些Bounds都未能超过best-so-far，那就可以开始算DTW with early abandoning。

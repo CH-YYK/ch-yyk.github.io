@@ -73,7 +73,7 @@ Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ...,
 How does DTW (Dynamic Time Warping) work Explaination:假设已知两个序列\(X\)和\(Y\)，长度分别为\(M\)和\(N\)。当\(M=N\)的时候，此时最简单且直接的办法就是算“点对点”的欧式距离，但局限就是要求X与Y的序列长度相同，而显而易见这个并不能保证任何场景都满足。当两者都不等长时候，就不能像理想状况那样找到唯一且符合常识的对应关系，在这种情况下，我们需要综合考虑两个序列所能构成的所有“点与点”之间的对应关系（或者说是X上的任意点与Y上的任意点的距离），这样我们总共可以获得 \(M×N\) 对点，也就是\(M×N\)个“距离”。如果我们将这些距离用一个M×N的矩阵表示出来 \(Cost \in R^{M\times N}\)，在这里元素\(Cost_{i,j}\) 指的就是X上的index 为i的值与Y上index为j的值的距离。为了获得一个可以表示similarity的数字（这里定义为\(cost\)），DTW提供了一个基于该矩阵获得measure的思路：找一条起始于\(（0,0）\)终于\(（M-1，N-1）\)而且monotonic的路径，要求该路径所覆盖的“距离”总和最小。问题也因此被简化为了一个动态规划中的“最短路径”问题。
 Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ..., t_m\)。由于\(T\)很长，所以我们会用它的子序列来作比较。 Definition-2: 定义序列 \(T_{i,k} = t_i, t_{i&#43;1}, ..., t_{i&#43;k-1}\)为长度为\(k\)，起始于\(t_i\)的\(T\)的子序列。 Definition-3: 假设有序列\(Q\)和\(C\)，当\(|Q|=|C|\)时，定义\(Q\)和\(C\)之间的Euclidean distance (ED) 为： \[ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2} \]  为避免产生歧义，用\(C\)来表示\(T_{i,k}\)作为用来比较的子序列，用\(Q\)来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。",
   "inLanguage" : "en",
-  "wordCount": 222,
+  "wordCount": 224,
   "datePublished" : "2019-08-11T00:00:00",
   "dateModified" : "2019-08-11T00:00:00",
   "image" : "/img/cat.jpeg",
@@ -114,7 +114,7 @@ Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ...,
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Hello World" />
 
-  <meta name="generator" content="Hugo 0.52" />
+  <meta name="generator" content="Hugo 0.53" />
   <link rel="alternate" href="../../index.xml" type="application/rss+xml" title="Hello World">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
@@ -277,7 +277,7 @@ Definitions and Notations  Definition-1: 定义有序序列 \(T = t_1, t_2, ...,
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;222&nbsp;words
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;224&nbsp;words
   
   
     &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
@@ -321,6 +321,10 @@ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
 </ul>
 <p>为避免产生歧义，用<span class="math inline">\(C\)</span>来表示<span class="math inline">\(T_{i,k}\)</span>作为用来比较的子序列，用<span class="math inline">\(Q\)</span>来表示被比较的Query。之前也提到DTW计算过程被简化为一个“最短路径问题”。</p>
 <!-- [外链图片转存失败(img-DiTn7EWl-1563226828525)(./images/image-1.png)]-->
+<div class="figure">
+<img src="https://img-blog.csdnimg.cn/20190716055650754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" style="width:70.0%" style="height:70.0%" />
+<p class="caption">在这里插入图片描述</p>
+</div>
 <p>如图所示的红线便是需要找到的“目标路径”，它有一个专有的名词叫warping path。而、依照不同场景的要求，可以对search的区间设置上下界，例如：<span class="math inline">\(Q_i\)</span> 最多只与<span class="math inline">\(C_{i-w}\)</span>到<span class="math inline">\(C_{i+w}\)</span>这系列点进行配对。这时候相当于搜索在连续地用X与Y的subsequences来进行比较（绿线的作用）。</p>
 </div>
 </div>
@@ -349,11 +353,15 @@ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
 <p>依照作者在隐藏假设条件，涉及到算距离的时候需要对子序列分别进行Z-normalization，这部分可能比算加入early abandoning的Euclidean distance计算复杂度更高。作者还在paper里感慨，“之前一直没有人做这方面的优化”。此处作者的优化点在于在算<em>Euclidean Distance</em>或者<em><span class="math inline">\(LB_{Keogh}\)</span></em>时候嵌入了early abandoning。</p>
 <p>算法伪代码如下图。</p>
 <!-- [外链图片转存失败(img-Ml6KLYqb-1563226828526)(./images/algo-1.png)] -->
+<div class="figure">
+<img src="https://img-blog.csdnimg.cn/20190716060136818.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" style="width:80.0%" style="height:80.0%" />
+<p class="caption">在这里插入图片描述</p>
+</div>
 <p>在line 10的条件里加入了与best-so-far的比较，若超过则停下。最后下来的结果是我们从C中找到了一个subsequence与Q距离最短。</p>
 </div>
 <div id="reordering-early-abandoning" class="section level4">
 <h4>2. Reordering Early Abandoning</h4>
-<p>这一条其实还是离不开early abandoning的范畴，以ED为例，如果已经有一个best-so-far的距离的话 （假设为<span class="math inline">\(b\)</span>），我们只需要知道<span class="math inline">\(C\)</span>中存在一部分点，而且这部分点与<span class="math inline">\(Q\)</span>中对应点的之间的距离已经超过了<span class="math inline">\(b\)</span>的话，我们就没有必要再测别的了。 <!-- [外链图片转存失败(img-QaHEEw2X-1563226828527)(./images/image-2.png)] --></p>
+<p>这一条其实还是离不开early abandoning的范畴，以ED为例，如果已经有一个best-so-far的距离的话 （假设为<span class="math inline">\(b\)</span>），我们只需要知道<span class="math inline">\(C\)</span>中存在一部分点，而且这部分点与<span class="math inline">\(Q\)</span>中对应点的之间的距离已经超过了<span class="math inline">\(b\)</span>的话，我们就没有必要再测别的了。 <!-- [外链图片转存失败(img-QaHEEw2X-1563226828527)(./images/image-2.png)] --> <img src="https://img-blog.csdnimg.cn/20190716055728666.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" style="width:80.0%" style="height:80.0%" /></p>
 <p>所以作者提出，我们从<em>最大的距离</em>开始加而不是从<em>第一个</em>点开始算，这样也许只需要算很少的一部分点就可以让程序终止了。也是一个不错的pruning off的方法。</p>
 </div>
 <div id="reversing-the-querydata-role-in-lb_keogh" class="section level4">
@@ -362,8 +370,7 @@ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
 </div>
 <div id="cascading-lower-bounds." class="section level4">
 <h4>4.Cascading Lower Bounds.</h4>
-<p>Lower Bounds算法有好多种，而且与最后要的DTW相似程度与算法复杂度是成正比的，也就是Lower Bound越复杂最后结果就越精确（以算DTW为目标）。paper里有个线图很直接。 <!-- [外链图片转存失败(img-7LKTjZS1-1563226828528)(./images/image-3.png)]--></p>
-<p>当然lower bound不仅仅是图上有的这些，但在选lower bound的时候倾向于选择跟DTW更近，而且复杂度尽量低。图上的虚线相当于一个临界，一个好的lower bound至少要落在这条虚线上。</p>
+<p>Lower Bounds算法有好多种，而且与最后要的DTW相似程度与算法复杂度是成正比的，也就是Lower Bound越复杂最后结果就越精确（以算DTW为目标）。paper里有个线图很直接。 <!-- [外链图片转存失败(img-7LKTjZS1-1563226828528)(./images/image-3.png)]--> <img src="https://img-blog.csdnimg.cn/20190716055834428.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2dpdGh1Yl8zODI0MzIyMA==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" style="width:80.0%" style="height:80.0%" /> 当然lower bound不仅仅是图上有的这些，但在选lower bound的时候倾向于选择跟DTW更近，而且复杂度尽量低。图上的虚线相当于一个临界，一个好的lower bound至少要落在这条虚线上。</p>
 <p>当需要决定用哪个的时候，作者提出：所有都用，一个一个来，先从最弱的开始。算法设计合理的话这几个Lower bound基本上都可以同时在一次迭代中计算出来，如果其中任意Lower-bound超过了best-so-far，就可以直接停下。因此理论上可以将复杂度控制在<span class="math inline">\(O(1)\)</span>和<span class="math inline">\(O(n)\)</span>之间。最后若这些Bounds都未能超过best-so-far，那就可以开始算DTW with early abandoning。</p>
 </div>
 </div>
@@ -553,7 +560,7 @@ ED(Q,C) = \sqrt{\sum_{i=1}^n(q_i - c_i)^2}
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.52</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="http://gohugo.io">Hugo v0.53</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
           
         </p>
       </div>

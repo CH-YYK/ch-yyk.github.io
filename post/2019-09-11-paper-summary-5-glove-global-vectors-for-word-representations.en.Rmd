@@ -1,0 +1,149 @@
+---
+title: 'Paper-summary-5: Glove-Global Vectors for Word Representations'
+author: Yikang
+date: '2019-09-11'
+slug: paper-summary-5-glove-global-vectors-for-word-representations
+categories: ['Machine Learning']
+---
+
+相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
+
+## Introduction:
+
+现在较为流行的两类词向量训练方法集为：
+- Global Matrix Factorization: LSA
+- Local Context Window Method: Skip-Gram
+
+目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+
+
+## Pre-defined Notations
+
+- $X$ : 词与词的共存矩阵。  
+- $X_{ij}$:  单词$j$出现在单词$i$上下文的次数。
+- $X_i = \sum_kX_{ik}$
+- $P_{ij}=P(j|i) = X_{ij}/{X_i}$: 单词$j$出现在单词$i$上下文的概率。
+- $w \in \mathbb{R}^d$: word vectors
+- $\widetilde{w} \in \mathbb{R}^d$: context word vectors
+
+## Methodology
+首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵$X$，进而获得概率矩阵$P$。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词$i$, $j$, $k$。其$k$与$i$上下文关联性强于$k$与$j$，则我们最后的词向量应当使$P_{ik} / P_{jk}$尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
+
+$$F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}$$
+
+适合这个式子本身的$F$将会特别多，现在开始对$F$加限制条件。首先需要让$F$函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的$i$与$j$的差异性，所以尝试把$w_i$和$w_j$替换为$(w_i-w_j)$。函数变为
+
+$$F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}$$
+
+显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。
+
+$$F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}$$
+
+接下来的这一步有些tricky，首先在构建$X$的时候，如果$j$在$i$的context中，那么我们同时可以推测$i$也在$j$的context中，考虑到每个word最终只有一个向量与之对应，因此推测出$F$应为一个关于$w_i$和$\widetilde{w}_j$的对称函数。为达成这一目标，首先要求$F$为一个从$(\mathbb{R}, +)$映射到$(\mathbb{R}, \times)$的一个group homomorphism，通式为
+$F(a + b) = F(a) \times F(b)$。因此我们的$F$变为
+
+$$F((w_i-w_j)^T\widetilde{w}_k) = \frac{F(w_i^T\widetilde{w}_k)}{F(w_j^T\widetilde{w}_k)} = \frac{P_{ik}}{P_{jk}}$$
+
+进一步假设
+
+$$F(w_i^T\widetilde{w}_k) = P_{ik} = \frac{X_{ik}}{X_i}$$
+
+这两步可以看出是一个相减形式变为相除形式的过程，所以可以简单假设$F=exp$。
+
+$$w_i^T\widetilde{w}_k=log(P_{ik}) = log(X_{ik}) - log(X_i)$$
+
+这个式子除了$log(X_i)$已经可以基本保证对称了。现在引入$b_i = log(X_i)$将$log(X_i)$作为一个bias term，再引入一个$\widetilde{b}_k$作为一个与$\widetilde{w}_k$对应的bias term。最后我们获得一个新的，并关于i,k对称的映射关系：
+
+$$w_i^T\widetilde{w}_k + b_i + \widetilde{b}_k = log(X_{ik})$$
+
+也就是说我们最后的word vectors及模型参数($w_i,\ \widetilde{w}_k,\ b_i,\ \widetilde{b}_k$)应该尽可能去拟合$log(X_{ik})$，进而可以依照该关系式获得loss function。简单的例如least square。
+
+这个之前提到过定义$F$为一个group homomorphism是比较tricky的，但若以求得一个“对称函数”这个结果为导向的话却是一个让最终式子对称的合理假设。[StackOverflow](https://datascience.stackexchange.com/questions/27042/glove-vector-representation-homomorphism-question)上有一个关于该假设的较合理解释。
+
+以least square为例，上述映射关系还是存在些许缺陷，首先就是log function在近0是会趋近于无穷大，而这在文本任务这类离散数据集是很常见的。所以一个直接的办法是add-one smoothing，也就是统一加1变为$log(X_{ik}+1)$。另外一个缺陷就是该loss function中所有co-occurence term具有相同权重，当两个单词之间的co-occurences比较少的时候，基于该$X_{ij}$所产生的loss应该被归类为噪声，但由于$X$大部分情况下是一个sparse matrix，而且之前的smoothing method使得这类“噪声”变得特别多。有种劣币驱逐良币的既视感。所以在这里的least square loss function被加入了权重因子用来平衡这点。也就是所谓的 weighted least square loss function。
+
+$$J = \sum_{i,j=1}^V f(X_{ij})(w_i^T\widecheck{w}_j + b_i+\widetilde{b}_j - log(X_{ij}))^2$$
+
+$f$作为一个定义在$X_{ij}$上的权重函数，并且满足如下性质。
+
+1. $f(0) = 0$, 相比于smoothing method，在这里直接跳过zero entry。
+2. $f(x)$ 为递增函数，$X_{ij}$越大所产生的权重越大。
+3. $f(x)$ 为凹函数，当$x$足够大时候，抑制或停止对$f(x)$的增长，目的是避免大$X_{ij}$被overweighted。
+
+最终获得
+$$f(x) = (x/x_{max})^\alpha\mathbb{I}(x<x_{max}) + \mathbb{I}(x\geq x_{max})$$ 
+原paper没有这么难看，（markdown不知为啥没法打出大括号）。在paper中$x_{max}$被固定为100，$\alpha$被固定为3/4，这是原作者实验的结果，而这也恰好是Mikolov在word2vec中设定的超参数。
+
+## Relations to Other Models
+既然所有的非监督方法都利了基于语料库的统计量，例如co-occurrence，作者推断其中某些方面应该存在共性。在这里以skip-gram举例来探究其与本文提出的GloVe之间的联系。首先从模型目的出发，skip-gram或ivLBL的目标是找到一个概率$Q_{ij}$来表示单词$j$在单词$i$的上下文的概率。假设$Q_{ij}$ 为某softmax形式
+
+$$Q_{ij} = \frac{exp(w_i^T\widetilde{w}_j)}{\sum_{k=1}^Vexp(w_i^T\widetilde{w}_k)}$$
+
+全局的loss function可以推断为
+
+$$J = -\sum_{i\in corpus\ \&\ j \in context(i)}log Q_{ij}$$
+
+现在把所有相同的单词对 （i,j）给整合起来，我们能获得
+
+$$J = -\sum_{i=1}^V\sum_{j=1}^VX_{ij}logQ_{ij}$$
+
+利用之前的notation，进一步可获得
+
+$$J = -\sum_{i=1}^VX_i\sum_{j=1}^VP_{ij}logQ_{ij} = \sum_{i=1}^VX_iH(P_i, Q_i)$$
+
+这里的$H$即为$P_i$与$Q_i$之间的cross-entropy。而$J$也因此可以被看作weighted sum of cross-entropy，这和上一节提到的weighted sum of least square 有着异曲同工之妙。这时候通过比较这两类loss function，可以进一步分析出GloVe的优势点了。
+
+首先说说cross entropy error的缺点。
+
+1. 原paper中有提到，对long-tail distribution，modeling的效果比较差，因为模型赋予了小众事件过多的权重。
+2. 为了使模型有界，需要对词库整个遍历然后对每个$Q_{ij}$进行标准化操作。
+3. 最主要的是cross-entropy本身也不是衡量概率距离的唯一选择。
+
+假设使用least square来度量$P_i$与$P_j$之间的距离，获得一个新的loss function
+
+$$\hat{J} = \sum_{i,j}X_i(\hat{P}_{ij}-\hat{Q}_{ij})^2$$
+
+有$\hat{P}_{ij} = X_{ij}$及$\hat{Q}_{ij} = exp(w_i^T\widetilde{w}_j)$，因为$X_{ij}$的取值一般都特别大，所以用log-form代替。
+
+$$\hat{J} = \sum_{i,j}X_i(log\hat{P}_{ij}-log\hat{Q}_{ij})^2 = \sum_{i,j}X_i(w_i^T\widetilde{w}_j-logX_{ij})^2$$
+
+现在的式子已经基本上和之前关于GloVe的式子等价了，前面的$X_i$同样是作为weighting factor来用的，而恰好在Mikolov的Paper中同样提到过，降低高频词的weighting factor有效值可以提高模型效果。所以再引入一个weighting function
+
+$$\hat{J}=\sum_{i,j}f(X_{ij})(w_i^T\widetilde{w}_j-logX_{ij})^2$$
+
+好了，完美，现在几乎已经彻底变成GloVe了。
+
+## Complexity Analysis
+不考虑训练的话，GloVe模型的计算时候只考虑了非0的$X_{ij}$，所以计算loss时候最大应该不超过$O(|V|^2)$。而基于窗口的方法，例如skip-gram，需要遍历整个语料库，最终的时间复杂度最大应为$O(|C|)$，在这里$|V|$和$|C|$分别为词库大小和语料库的大小。但仅仅这样算会发现GloVe的复杂度远高于Skip-gram，但事实上0元素在$X$中所占据的比重一般是相当大的，所以实际上GloVe的复杂度应该远小于$O(|V|^2)$。作者在这里提出了一个相对更精确的复杂度计算方法，主要目的是用来估算非0元素的个数。
+
+首先假设i和j的共存个数，$X_{ij}$，与它们在$X$中rank满足一个power-law函数，即
+
+$$X_{ij} = \frac{k}{(r_{ij})^\alpha}$$
+
+首先知道词库大小与所有单词对数成正比的。我们可获得
+
+$$|C| \sim \sum_{ij}X_{ij}=\sum_{r=1}^{|X|}\frac{k}{r^\alpha} = k H_{|X|,\alpha}$$
+
+在这里$H_{n,m}$为generalized harmonic number，也就是所谓的调和级数，而$|X|$是$X$的最大的frequency rank，而同时他也是非0元素的个数，如果只考虑$X_{ij}\geq 1$的情况的话，即当$r_{ij} = |X| \Rightarrow X_{ij}=1$。因此有
+
+$$1 = \frac{k}{|X|^\alpha}\Longrightarrow |X|=k^{1/\alpha}\Longrightarrow k = |X|^\alpha$$
+
+那么上一个式子也因此变为
+
+$$ |C| \sim |X|^\alpha H_{|X|, \alpha}$$
+
+若将$H$按如下规则展开$H_{x,s} = \frac{x^{1-s}}{1-s} + \zeta(s) + O(x^{-s})$，可获得
+
+$$|C| \sim \frac{|X|}{1-\alpha} + \zeta(\alpha) |X|^\alpha + O(1)$$
+
+而且我们都知道$|C|$和$|X|$在这里都是超级大的数，其他项完全可以被dominate掉。所以接下来就进入了两种两种情况。
+
+- $\alpha > 1 \Longrightarrow |X|^\alpha \succcurlyeq \frac{|X|}{1-\alpha}$， 可获得$|X| = O(|C|^{1/\alpha})$。
+- $\alpha < 1 \Longrightarrow |X|^\alpha \preccurlyeq \frac{|X|}{1-\alpha}$，可获得$|X| = O(|C|)$。
+
+考虑到实验时候经常将$\alpha$设为3/4，那么最后的平均复杂度为$|X|=O(|C|^{0.8})$，最劣情况仍然为 $O(|V|^2)$
+
+## Conclusion
+GloVe本质上还是一个unsupervised count-based method，训练时候也是依赖的co-occurence matrix，$X$。参数分别为$W$和$\tilde{W}$，虽然二者的初始值不同，但当$X$为对称矩阵的时候，$W$与$\tilde{W}$最终应该是会等价，最后用的word vectors为$W + \tilde{W}$，相加是为了降低方差防overfitting。
+
+根据paper中的实验部分发现，GloVe在很多任务都取得了SOTA值。不仅如此，作者在文中总结了各个unsupervised word embedding的方法，以及他们各自与GloVe的联系。看完这篇再去复习一下那几篇感觉会很有作用。

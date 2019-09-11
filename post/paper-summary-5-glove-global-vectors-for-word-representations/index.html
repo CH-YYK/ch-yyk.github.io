@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Paper-summary-5: Glove-Global Vectors for Word Representations - Hello World</title>
+  <meta property="og:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
+  <meta name="twitter:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
+  <meta name="description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
+Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
+目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+ Pre-defined Notations  \(X\) : 词与词的共存矩阵。
+ \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
+\[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
+适合这个式子本身的\(F\)将会特别多，现在开始对\(F\)加限制条件。首先需要让\(F\)函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的\(i\)与\(j\)的差异性，所以尝试把\(w_i\)和\(w_j\)替换为\((w_i-w_j)\)。函数变为
+\[F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。
+\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为">
+  <meta property="og:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
+Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
+目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+ Pre-defined Notations  \(X\) : 词与词的共存矩阵。
+ \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
+\[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
+适合这个式子本身的\(F\)将会特别多，现在开始对\(F\)加限制条件。首先需要让\(F\)函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的\(i\)与\(j\)的差异性，所以尝试把\(w_i\)和\(w_j\)替换为\((w_i-w_j)\)。函数变为
+\[F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。
+\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为">
+  <meta name="twitter:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一 …">
+  <meta name="author" content="Yikang Yang"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Hello World",
+    
+    "url": "/"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "/"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "/",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "/post/paper-summary-5-glove-global-vectors-for-word-representations/",
+          "name": "Paper summary 5 glove global vectors for word representations"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Yikang"
+  },
+  "headline": "Paper-summary-5: Glove-Global Vectors for Word Representations",
+  "description" : "相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
+Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
+目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+ Pre-defined Notations  \(X\) : 词与词的共存矩阵。
+ \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
+\[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
+适合这个式子本身的\(F\)将会特别多，现在开始对\(F\)加限制条件。首先需要让\(F\)函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的\(i\)与\(j\)的差异性，所以尝试把\(w_i\)和\(w_j\)替换为\((w_i-w_j)\)。函数变为
+\[F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。
+\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为",
+  "inLanguage" : "en",
+  "wordCount": 309,
+  "datePublished" : "2019-09-11T00:00:00",
+  "dateModified" : "2019-09-11T00:00:00",
+  "image" : "/img/cat.jpeg",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "/post/paper-summary-5-glove-global-vectors-for-word-representations/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "/",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "/img/cat.jpeg",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
+<meta property="og:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
+Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
+目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+ Pre-defined Notations  \(X\) : 词与词的共存矩阵。
+ \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
+\[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
+适合这个式子本身的\(F\)将会特别多，现在开始对\(F\)加限制条件。首先需要让\(F\)函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的\(i\)与\(j\)的差异性，所以尝试把\(w_i\)和\(w_j\)替换为\((w_i-w_j)\)。函数变为
+\[F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。
+\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
+接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为">
+<meta property="og:image" content="/img/cat.jpeg" />
+<meta property="og:url" content="/post/paper-summary-5-glove-global-vectors-for-word-representations/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Hello World" />
+  <meta name="twitter:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
+  <meta name="twitter:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一 …">
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <link href='../../img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="/img/cat.jpeg" />
+  <meta name="twitter:image" content="/img/cat.jpeg" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/post/paper-summary-5-glove-global-vectors-for-word-representations/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hello World" />
+
+  <meta name="generator" content="Hugo 0.53" />
+  <link rel="alternate" href="../../index.xml" type="application/rss+xml" title="Hello World">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="../../css/highlight.min.css" /><link rel="stylesheet" href="../../css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../../">Hello World</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="main" href="../../home">main</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="../../page/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Blog" href="../../post/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="../../tags/">Tags</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Categories" href="../../categories">Categories</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Hello World" href="../../">
+            <img class="avatar-img" src="../../img/cat.jpeg" alt="Hello World" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Paper-summary-5: Glove-Global Vectors for Word Representations</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on September 11, 2019
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;309&nbsp;words
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+
+<p>相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。</p>
+<div id="introduction" class="section level2">
+<h2>Introduction:</h2>
+<p>现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram</p>
+<p>目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。</p>
+</div>
+<div id="pre-defined-notations" class="section level2">
+<h2>Pre-defined Notations</h2>
+<ul>
+<li><span class="math inline">\(X\)</span> : 词与词的共存矩阵。<br />
+</li>
+<li><span class="math inline">\(X_{ij}\)</span>: 单词<span class="math inline">\(j\)</span>出现在单词<span class="math inline">\(i\)</span>上下文的次数。</li>
+<li><span class="math inline">\(X_i = \sum_kX_{ik}\)</span></li>
+<li><span class="math inline">\(P_{ij}=P(j|i) = X_{ij}/{X_i}\)</span>: 单词<span class="math inline">\(j\)</span>出现在单词<span class="math inline">\(i\)</span>上下文的概率。</li>
+<li><span class="math inline">\(w \in \mathbb{R}^d\)</span>: word vectors</li>
+<li><span class="math inline">\(\widetilde{w} \in \mathbb{R}^d\)</span>: context word vectors</li>
+</ul>
+</div>
+<div id="methodology" class="section level2">
+<h2>Methodology</h2>
+<p>首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵<span class="math inline">\(X\)</span>，进而获得概率矩阵<span class="math inline">\(P\)</span>。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词<span class="math inline">\(i\)</span>, <span class="math inline">\(j\)</span>, <span class="math inline">\(k\)</span>。其<span class="math inline">\(k\)</span>与<span class="math inline">\(i\)</span>上下文关联性强于<span class="math inline">\(k\)</span>与<span class="math inline">\(j\)</span>，则我们最后的词向量应当使<span class="math inline">\(P_{ik} / P_{jk}\)</span>尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。</p>
+<p><span class="math display">\[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]</span></p>
+<p>适合这个式子本身的<span class="math inline">\(F\)</span>将会特别多，现在开始对<span class="math inline">\(F\)</span>加限制条件。首先需要让<span class="math inline">\(F\)</span>函数将等式右边的ratio在数学意义上表示出来，又因为（在之前的工作中）词向量空间本质上是一个线性空间，该ratio也是反映的<span class="math inline">\(i\)</span>与<span class="math inline">\(j\)</span>的差异性，所以尝试把<span class="math inline">\(w_i\)</span>和<span class="math inline">\(w_j\)</span>替换为<span class="math inline">\((w_i-w_j)\)</span>。函数变为</p>
+<p><span class="math display">\[F(w_i-w_j, \widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]</span></p>
+<p>显然，现在等式右侧为一个标量，左侧是一个关于向量的函数。为简化，先把左侧的函数arguments替换为向量内积让两边dimension相同。</p>
+<p><span class="math display">\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]</span></p>
+<p>接下来的这一步有些tricky，首先在构建<span class="math inline">\(X\)</span>的时候，如果<span class="math inline">\(j\)</span>在<span class="math inline">\(i\)</span>的context中，那么我们同时可以推测<span class="math inline">\(i\)</span>也在<span class="math inline">\(j\)</span>的context中，考虑到每个word最终只有一个向量与之对应，因此推测出<span class="math inline">\(F\)</span>应为一个关于<span class="math inline">\(w_i\)</span>和<span class="math inline">\(\widetilde{w}_j\)</span>的对称函数。为达成这一目标，首先要求<span class="math inline">\(F\)</span>为一个从<span class="math inline">\((\mathbb{R}, +)\)</span>映射到<span class="math inline">\((\mathbb{R}, \times)\)</span>的一个group homomorphism，通式为 <span class="math inline">\(F(a + b) = F(a) \times F(b)\)</span>。因此我们的<span class="math inline">\(F\)</span>变为</p>
+<p><span class="math display">\[F((w_i-w_j)^T\widetilde{w}_k) = \frac{F(w_i^T\widetilde{w}_k)}{F(w_j^T\widetilde{w}_k)} = \frac{P_{ik}}{P_{jk}}\]</span></p>
+<p>进一步假设</p>
+<p><span class="math display">\[F(w_i^T\widetilde{w}_k) = P_{ik} = \frac{X_{ik}}{X_i}\]</span></p>
+<p>这两步可以看出是一个相减形式变为相除形式的过程，所以可以简单假设<span class="math inline">\(F=exp\)</span>。</p>
+<p><span class="math display">\[w_i^T\widetilde{w}_k=log(P_{ik}) = log(X_{ik}) - log(X_i)\]</span></p>
+<p>这个式子除了<span class="math inline">\(log(X_i)\)</span>已经可以基本保证对称了。现在引入<span class="math inline">\(b_i = log(X_i)\)</span>将<span class="math inline">\(log(X_i)\)</span>作为一个bias term，再引入一个<span class="math inline">\(\widetilde{b}_k\)</span>作为一个与<span class="math inline">\(\widetilde{w}_k\)</span>对应的bias term。最后我们获得一个新的，并关于i,k对称的映射关系：</p>
+<p><span class="math display">\[w_i^T\widetilde{w}_k + b_i + \widetilde{b}_k = log(X_{ik})\]</span></p>
+<p>也就是说我们最后的word vectors及模型参数(<span class="math inline">\(w_i,\ \widetilde{w}_k,\ b_i,\ \widetilde{b}_k\)</span>)应该尽可能去拟合<span class="math inline">\(log(X_{ik})\)</span>，进而可以依照该关系式获得loss function。简单的例如least square。</p>
+<p>这个之前提到过定义<span class="math inline">\(F\)</span>为一个group homomorphism是比较tricky的，但若以求得一个“对称函数”这个结果为导向的话却是一个让最终式子对称的合理假设。<a href="https://datascience.stackexchange.com/questions/27042/glove-vector-representation-homomorphism-question">StackOverflow</a>上有一个关于该假设的较合理解释。</p>
+<p>以least square为例，上述映射关系还是存在些许缺陷，首先就是log function在近0是会趋近于无穷大，而这在文本任务这类离散数据集是很常见的。所以一个直接的办法是add-one smoothing，也就是统一加1变为<span class="math inline">\(log(X_{ik}+1)\)</span>。另外一个缺陷就是该loss function中所有co-occurence term具有相同权重，当两个单词之间的co-occurences比较少的时候，基于该<span class="math inline">\(X_{ij}\)</span>所产生的loss应该被归类为噪声，但由于<span class="math inline">\(X\)</span>大部分情况下是一个sparse matrix，而且之前的smoothing method使得这类“噪声”变得特别多。有种劣币驱逐良币的既视感。所以在这里的least square loss function被加入了权重因子用来平衡这点。也就是所谓的 weighted least square loss function。</p>
+<p><span class="math display">\[J = \sum_{i,j=1}^V f(X_{ij})(w_i^T\widecheck{w}_j + b_i+\widetilde{b}_j - log(X_{ij}))^2\]</span></p>
+<p><span class="math inline">\(f\)</span>作为一个定义在<span class="math inline">\(X_{ij}\)</span>上的权重函数，并且满足如下性质。</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(f(0) = 0\)</span>, 相比于smoothing method，在这里直接跳过zero entry。</li>
+<li><span class="math inline">\(f(x)\)</span> 为递增函数，<span class="math inline">\(X_{ij}\)</span>越大所产生的权重越大。</li>
+<li><span class="math inline">\(f(x)\)</span> 为凹函数，当<span class="math inline">\(x\)</span>足够大时候，抑制或停止对<span class="math inline">\(f(x)\)</span>的增长，目的是避免大<span class="math inline">\(X_{ij}\)</span>被overweighted。</li>
+</ol>
+<p>最终获得 <span class="math display">\[f(x) = (x/x_{max})^\alpha\mathbb{I}(x&lt;x_{max}) + \mathbb{I}(x\geq x_{max})\]</span> 原paper没有这么难看，（markdown不知为啥没法打出大括号）。在paper中<span class="math inline">\(x_{max}\)</span>被固定为100，<span class="math inline">\(\alpha\)</span>被固定为3/4，这是原作者实验的结果，而这也恰好是Mikolov在word2vec中设定的超参数。</p>
+</div>
+<div id="relations-to-other-models" class="section level2">
+<h2>Relations to Other Models</h2>
+<p>既然所有的非监督方法都利了基于语料库的统计量，例如co-occurrence，作者推断其中某些方面应该存在共性。在这里以skip-gram举例来探究其与本文提出的GloVe之间的联系。首先从模型目的出发，skip-gram或ivLBL的目标是找到一个概率<span class="math inline">\(Q_{ij}\)</span>来表示单词<span class="math inline">\(j\)</span>在单词<span class="math inline">\(i\)</span>的上下文的概率。假设<span class="math inline">\(Q_{ij}\)</span> 为某softmax形式</p>
+<p><span class="math display">\[Q_{ij} = \frac{exp(w_i^T\widetilde{w}_j)}{\sum_{k=1}^Vexp(w_i^T\widetilde{w}_k)}\]</span></p>
+<p>全局的loss function可以推断为</p>
+<p><span class="math display">\[J = -\sum_{i\in corpus\ \&amp;\ j \in context(i)}log Q_{ij}\]</span></p>
+<p>现在把所有相同的单词对 （i,j）给整合起来，我们能获得</p>
+<p><span class="math display">\[J = -\sum_{i=1}^V\sum_{j=1}^VX_{ij}logQ_{ij}\]</span></p>
+<p>利用之前的notation，进一步可获得</p>
+<p><span class="math display">\[J = -\sum_{i=1}^VX_i\sum_{j=1}^VP_{ij}logQ_{ij} = \sum_{i=1}^VX_iH(P_i, Q_i)\]</span></p>
+<p>这里的<span class="math inline">\(H\)</span>即为<span class="math inline">\(P_i\)</span>与<span class="math inline">\(Q_i\)</span>之间的cross-entropy。而<span class="math inline">\(J\)</span>也因此可以被看作weighted sum of cross-entropy，这和上一节提到的weighted sum of least square 有着异曲同工之妙。这时候通过比较这两类loss function，可以进一步分析出GloVe的优势点了。</p>
+<p>首先说说cross entropy error的缺点。</p>
+<ol style="list-style-type: decimal">
+<li>原paper中有提到，对long-tail distribution，modeling的效果比较差，因为模型赋予了小众事件过多的权重。</li>
+<li>为了使模型有界，需要对词库整个遍历然后对每个<span class="math inline">\(Q_{ij}\)</span>进行标准化操作。</li>
+<li>最主要的是cross-entropy本身也不是衡量概率距离的唯一选择。</li>
+</ol>
+<p>假设使用least square来度量<span class="math inline">\(P_i\)</span>与<span class="math inline">\(P_j\)</span>之间的距离，获得一个新的loss function</p>
+<p><span class="math display">\[\hat{J} = \sum_{i,j}X_i(\hat{P}_{ij}-\hat{Q}_{ij})^2\]</span></p>
+<p>有<span class="math inline">\(\hat{P}_{ij} = X_{ij}\)</span>及<span class="math inline">\(\hat{Q}_{ij} = exp(w_i^T\widetilde{w}_j)\)</span>，因为<span class="math inline">\(X_{ij}\)</span>的取值一般都特别大，所以用log-form代替。</p>
+<p><span class="math display">\[\hat{J} = \sum_{i,j}X_i(log\hat{P}_{ij}-log\hat{Q}_{ij})^2 = \sum_{i,j}X_i(w_i^T\widetilde{w}_j-logX_{ij})^2\]</span></p>
+<p>现在的式子已经基本上和之前关于GloVe的式子等价了，前面的<span class="math inline">\(X_i\)</span>同样是作为weighting factor来用的，而恰好在Mikolov的Paper中同样提到过，降低高频词的weighting factor有效值可以提高模型效果。所以再引入一个weighting function</p>
+<p><span class="math display">\[\hat{J}=\sum_{i,j}f(X_{ij})(w_i^T\widetilde{w}_j-logX_{ij})^2\]</span></p>
+<p>好了，完美，现在几乎已经彻底变成GloVe了。</p>
+</div>
+<div id="complexity-analysis" class="section level2">
+<h2>Complexity Analysis</h2>
+<p>不考虑训练的话，GloVe模型的计算时候只考虑了非0的<span class="math inline">\(X_{ij}\)</span>，所以计算loss时候最大应该不超过<span class="math inline">\(O(|V|^2)\)</span>。而基于窗口的方法，例如skip-gram，需要遍历整个语料库，最终的时间复杂度最大应为<span class="math inline">\(O(|C|)\)</span>，在这里<span class="math inline">\(|V|\)</span>和<span class="math inline">\(|C|\)</span>分别为词库大小和语料库的大小。但仅仅这样算会发现GloVe的复杂度远高于Skip-gram，但事实上0元素在<span class="math inline">\(X\)</span>中所占据的比重一般是相当大的，所以实际上GloVe的复杂度应该远小于<span class="math inline">\(O(|V|^2)\)</span>。作者在这里提出了一个相对更精确的复杂度计算方法，主要目的是用来估算非0元素的个数。</p>
+<p>首先假设i和j的共存个数，<span class="math inline">\(X_{ij}\)</span>，与它们在<span class="math inline">\(X\)</span>中rank满足一个power-law函数，即</p>
+<p><span class="math display">\[X_{ij} = \frac{k}{(r_{ij})^\alpha}\]</span></p>
+<p>首先知道词库大小与所有单词对数成正比的。我们可获得</p>
+<p><span class="math display">\[|C| \sim \sum_{ij}X_{ij}=\sum_{r=1}^{|X|}\frac{k}{r^\alpha} = k H_{|X|,\alpha}\]</span></p>
+<p>在这里<span class="math inline">\(H_{n,m}\)</span>为generalized harmonic number，也就是所谓的调和级数，而<span class="math inline">\(|X|\)</span>是<span class="math inline">\(X\)</span>的最大的frequency rank，而同时他也是非0元素的个数，如果只考虑<span class="math inline">\(X_{ij}\geq 1\)</span>的情况的话，即当<span class="math inline">\(r_{ij} = |X| \Rightarrow X_{ij}=1\)</span>。因此有</p>
+<p><span class="math display">\[1 = \frac{k}{|X|^\alpha}\Longrightarrow |X|=k^{1/\alpha}\Longrightarrow k = |X|^\alpha\]</span></p>
+<p>那么上一个式子也因此变为</p>
+<p><span class="math display">\[ |C| \sim |X|^\alpha H_{|X|, \alpha}\]</span></p>
+<p>若将<span class="math inline">\(H\)</span>按如下规则展开<span class="math inline">\(H_{x,s} = \frac{x^{1-s}}{1-s} + \zeta(s) + O(x^{-s})\)</span>，可获得</p>
+<p><span class="math display">\[|C| \sim \frac{|X|}{1-\alpha} + \zeta(\alpha) |X|^\alpha + O(1)\]</span></p>
+<p>而且我们都知道<span class="math inline">\(|C|\)</span>和<span class="math inline">\(|X|\)</span>在这里都是超级大的数，其他项完全可以被dominate掉。所以接下来就进入了两种两种情况。</p>
+<ul>
+<li><span class="math inline">\(\alpha &gt; 1 \Longrightarrow |X|^\alpha \succcurlyeq \frac{|X|}{1-\alpha}\)</span>， 可获得<span class="math inline">\(|X| = O(|C|^{1/\alpha})\)</span>。</li>
+<li><span class="math inline">\(\alpha &lt; 1 \Longrightarrow |X|^\alpha \preccurlyeq \frac{|X|}{1-\alpha}\)</span>，可获得<span class="math inline">\(|X| = O(|C|)\)</span>。</li>
+</ul>
+<p>考虑到实验时候经常将<span class="math inline">\(\alpha\)</span>设为3/4，那么最后的平均复杂度为<span class="math inline">\(|X|=O(|C|^{0.8})\)</span>，最劣情况仍然为 <span class="math inline">\(O(|V|^2)\)</span></p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>GloVe本质上还是一个unsupervised count-based method，训练时候也是依赖的co-occurence matrix，<span class="math inline">\(X\)</span>。参数分别为<span class="math inline">\(W\)</span>和<span class="math inline">\(\tilde{W}\)</span>，虽然二者的初始值不同，但当<span class="math inline">\(X\)</span>为对称矩阵的时候，<span class="math inline">\(W\)</span>与<span class="math inline">\(\tilde{W}\)</span>最终应该是会等价，最后用的word vectors为<span class="math inline">\(W + \tilde{W}\)</span>，相加是为了降低方差防overfitting。</p>
+<p>根据paper中的实验部分发现，GloVe在很多任务都取得了SOTA值。不仅如此，作者在文中总结了各个unsupervised word embedding的方法，以及他们各自与GloVe的联系。看完这篇再去复习一下那几篇感觉会很有作用。</p>
+</div>
+
+
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f&amp;text=Paper-summary-5%3a%20Glove-Global%20Vectors%20for%20Word%20Representations&amp;via=" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//plus.google.com/share?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f" target="_blank" title="Share on Google Plus">
+          <i class="fab fa-google-plus"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f&amp;title=Paper-summary-5%3a%20Glove-Global%20Vectors%20for%20Word%20Representations" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f&amp;title=Paper-summary-5%3a%20Glove-Global%20Vectors%20for%20Word%20Representations" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f&amp;title=Paper-summary-5%3a%20Glove-Global%20Vectors%20for%20Word%20Representations" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=CH-YYK.github.io/%2fpost%2fpaper-summary-5-glove-global-vectors-for-word-representations%2f&amp;description=Paper-summary-5%3a%20Glove-Global%20Vectors%20for%20Word%20Representations" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+              </div>
+            </section>
+        
+
+        
+          
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="../../post/paper-summary-1-searching-and-mining-trillions-of-time-series-subsequences-under-dynamic-time-warping/" data-toggle="tooltip" data-placement="top" title="Paper-summary-1: Searching and Mining Trillions of Time Series Subsequences under Dynamic Time Warping">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:yikang.yang95@gmail.com" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.facebook.com/Yikang%20Yang" title="Facebook">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/CH-YYK" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/yikang-yang-158162155" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="../../index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="yourwebsite.com">Yikang Yang</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2019
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="../../">Hello World</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.53</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="../../js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+  </body>
+</html>
+

@@ -11,8 +11,8 @@
   <meta property="og:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
   <meta name="twitter:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
   <meta name="description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
-Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
-目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+Introduction: 现在较为流行的两类词向量训练方法集为：
+ Global Matrix Factorization: LSA Local Context Window Method: Skip-Gram  目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
  Pre-defined Notations  \(X\) : 词与词的共存矩阵。
  \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
 \[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
@@ -22,8 +22,8 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
 \[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
 接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为">
   <meta property="og:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
-Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
-目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+Introduction: 现在较为流行的两类词向量训练方法集为：
+ Global Matrix Factorization: LSA Local Context Window Method: Skip-Gram  目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
  Pre-defined Notations  \(X\) : 词与词的共存矩阵。
  \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
 \[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
@@ -82,8 +82,8 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
   },
   "headline": "Paper-summary-5: Glove-Global Vectors for Word Representations",
   "description" : "相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
-Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
-目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+Introduction: 现在较为流行的两类词向量训练方法集为：
+ Global Matrix Factorization: LSA Local Context Window Method: Skip-Gram  目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
  Pre-defined Notations  \(X\) : 词与词的共存矩阵。
  \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
 \[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
@@ -93,7 +93,7 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
 \[F((w_i-w_j)^T\widetilde{w}_k) = \frac{P_{ik}}{P_{jk}}\]
 接下来的这一步有些tricky，首先在构建\(X\)的时候，如果\(j\)在\(i\)的context中，那么我们同时可以推测\(i\)也在\(j\)的context中，考虑到每个word最终只有一个向量与之对应，因此推测出\(F\)应为一个关于\(w_i\)和\(\widetilde{w}_j\)的对称函数。为达成这一目标，首先要求\(F\)为一个从\((\mathbb{R}, &#43;)\)映射到\((\mathbb{R}, \times)\)的一个group homomorphism，通式为 \(F(a &#43; b) = F(a) \times F(b)\)。因此我们的\(F\)变为",
   "inLanguage" : "en",
-  "wordCount": 309,
+  "wordCount": 307,
   "datePublished" : "2019-09-11T00:00:00",
   "dateModified" : "2019-09-11T00:00:00",
   "image" : "/img/cat.jpeg",
@@ -114,8 +114,8 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
 
 <meta property="og:title" content="Paper-summary-5: Glove-Global Vectors for Word Representations" />
 <meta property="og:description" content="相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。
-Introduction: 现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram
-目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
+Introduction: 现在较为流行的两类词向量训练方法集为：
+ Global Matrix Factorization: LSA Local Context Window Method: Skip-Gram  目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。
  Pre-defined Notations  \(X\) : 词与词的共存矩阵。
  \(X_{ij}\): 单词\(j\)出现在单词\(i\)上下文的次数。 \(X_i = \sum_kX_{ik}\) \(P_{ij}=P(j|i) = X_{ij}/{X_i}\): 单词\(j\)出现在单词\(i\)上下文的概率。 \(w \in \mathbb{R}^d\): word vectors \(\widetilde{w} \in \mathbb{R}^d\): context word vectors   Methodology 首先，作为词向量方面的永恒难题，如何从语料库中的词频等统计量提取词表征，词义是如何从这些统计量中产生的。未解决这个问题，作者首先基于语料库创建了个共存矩阵\(X\)，进而获得概率矩阵\(P\)。symbol的定义依照上一节。然后设定了一个新的metric。假设有单词\(i\), \(j\), \(k\)。其\(k\)与\(i\)上下文关联性强于\(k\)与\(j\)，则我们最后的词向量应当使\(P_{ik} / P_{jk}\)尽可能大，反之则尽可能小。现在尝试创建以该三个单词为变量的函数。
 \[F(w_i, w_j, \widetilde{w}_k)=\frac{P_{ik}}{P_{jk}}\]
@@ -303,7 +303,7 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
     &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;2&nbsp;minutes
   
   
-    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;309&nbsp;words
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;307&nbsp;words
   
   
     &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Yikang
@@ -332,7 +332,11 @@ Introduction: 现在较为流行的两类词向量训练方法集为： - Global
 <p>相信几乎每个用深度学习的人都被所谓的Pre-trained Glove统治过自己的模型，在懒得训练词向量的时候，一个pre-trained Glove成了最优备选方案。曾经某段时间，我还纠结过是该自己训练Word2vec还是偷懒用Glove，这次读了paper后发现，Glove在被发明出来的时候就已经把word2vec所表征的信息给包含进去了。这篇paper不仅从数学（？）角度详细推导了一次GloVe的式子，同时还单独开了一个section来论证了Skip-gram与GloVe的关系，这点个人感觉是非常地照顾读者了。</p>
 <div id="introduction" class="section level2">
 <h2>Introduction:</h2>
-<p>现在较为流行的两类词向量训练方法集为： - Global Matrix Factorization: LSA - Local Context Window Method: Skip-Gram</p>
+<p>现在较为流行的两类词向量训练方法集为：</p>
+<ul>
+<li>Global Matrix Factorization: LSA</li>
+<li>Local Context Window Method: Skip-Gram</li>
+</ul>
 <p>目前来讲，两类方法都存在各自的缺陷，LSA充分利用了基于词库的统计学方面的信息，但是在涉及到词相似度方面的任务时候表现的很差。而Skip-gram虽然在相似度任务上表现良好，但是却是于各个独立的局部上下文而不是基于整个语料库的co-occurrence counts。为了充分利用好二者的优势，作者提出了一个基于全局词与词共存对数的加权最小二乘法训练的模型，因此可以充分利用语料库的统计量。事实证明该方法在大部分同义词集中取得了SOTA的成果，并在词相似度任务和NER任务中都取得了领先的结果。</p>
 </div>
 <div id="pre-defined-notations" class="section level2">

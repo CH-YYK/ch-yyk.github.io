@@ -11,6 +11,7 @@ categories: ['Machine Learning']
 ## Introduction:
 
 现在较为流行的两类词向量训练方法集为：
+
 - Global Matrix Factorization: LSA
 - Local Context Window Method: Skip-Gram
 
